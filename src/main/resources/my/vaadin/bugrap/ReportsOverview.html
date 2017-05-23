@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+ <head>
+  <meta charset="UTF-8">
+  <meta name="design-properties" content="{&quot;RULERS_VISIBLE&quot;:true,&quot;GUIDELINES_VISIBLE&quot;:false,&quot;SNAP_TO_OBJECTS&quot;:true,&quot;SNAP_TO_GRID&quot;:true,&quot;SNAPPING_DISTANCE&quot;:10,&quot;JAVA_SOURCES_ROOT&quot;:&quot;src/main/java&quot;,&quot;THEME&quot;:&quot;mytheme&quot;}">
+  <meta name="vaadin-version" content="8.0.5">
+ </head>
+ <body>
+  <vaadin-vertical-layout size-full>
+   <vaadin-horizontal-layout spacing="false" width-full height="50px" _id="headerContainer"></vaadin-horizontal-layout>
+   <vaadin-horizontal-layout width-full height="35px" _id="versionsContainer">
+    <vaadin-label plain-text :middle>
+      Reports for 
+    </vaadin-label>
+    <vaadin-native-select width="120px" data-item-type="java.lang.String" _id="versionSelector" :expand>
+     <option item="Option1">Option 1</option>
+     <option item="Option2">Option 2</option>
+     <option item="Option3">Option 3</option>
+    </vaadin-native-select>
+   </vaadin-horizontal-layout>
+   <vaadin-horizontal-layout width-full height="50px" _id="filtersContainer"></vaadin-horizontal-layout>
+   <vaadin-horizontal-layout size-full :expand></vaadin-horizontal-layout>
+  </vaadin-vertical-layout>
+ </body>
+</html>
