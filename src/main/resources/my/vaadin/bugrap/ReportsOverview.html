@@ -7,7 +7,18 @@
  </head>
  <body>
   <vaadin-vertical-layout size-full>
-   <vaadin-horizontal-layout spacing="false" width-full height="50px" _id="headerContainer"></vaadin-horizontal-layout>
+   <vaadin-vertical-layout spacing="false" height="74px" margin="false" _id="headerContainer">
+    <vaadin-horizontal-layout width-full :expand>
+     <vaadin-native-select width="400px" data-item-type="java.lang.String" _id="projectSelector" :expand>
+      <option item="Option1">Option 1</option>
+      <option item="Option2">Option 2</option>
+      <option item="Option3">Option 3</option>
+     </vaadin-native-select>
+     <vaadin-label icon="fonticon://Vaadin-Icons/e80d" caption="Marc Manager" responsive plain-text _id="userProfile" :middle :right></vaadin-label>
+     <vaadin-label icon="fonticon://Vaadin-Icons/e6ac" caption="Logout" style-name="logout" plain-text :middle :right></vaadin-label>
+    </vaadin-horizontal-layout>
+    <vaadin-horizontal-layout width-full height="37px" :expand></vaadin-horizontal-layout>
+   </vaadin-vertical-layout>
    <vaadin-horizontal-layout width-full height="35px" _id="versionsContainer">
     <vaadin-label plain-text :middle>
       Reports for 

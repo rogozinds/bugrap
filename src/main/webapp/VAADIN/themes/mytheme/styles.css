@@ -12501,3 +12501,7 @@ div.v-layout.v-horizontal.v-widget {
 	width: 19px;
 	overflow: hidden;
 }
+
+.mytheme .logout {
+	border-left: thick double #ff0000;
+}
