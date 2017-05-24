@@ -36,8 +36,39 @@
 
   // Insert your own theme rules here
   
-  .logout {
-  	border-left: thick double #ff0000;
+  .profile {
+  	border-right: 2 solid;
+  	border-bottom: 2 solid transparent;
+  //	@include border(right, 2, solid, #FF0000);
   }
+  
+  .top-header, .bottom-footer{
+  	@include linear-gradient(0deg, #B0B0B0, #D6D6D6);
+  }
+  
+  .search-field {
+  		border-radius: 15px;
+  	}
+ 
+  	.v-margin-top {
+		padding-top: 0px;
+ 	 }
+
+	.v-margin-right {
+		padding-right: 0px;
+	}
+
+	.v-margin-bottom {
+		padding-bottom: 0px;
+	}
+
+	.v-margin-left {
+		padding-left: 0px;
+	}
+
+    .bugrap-padding {
+  		padding: 10px;
+  }
+  
   
 }

@@ -1,7 +1,5 @@
 package my.vaadin.bugrap.layouts;
 
-import java.util.List;
-
 import com.vaadin.event.selection.SingleSelectionEvent;
 import com.vaadin.event.selection.SingleSelectionListener;
 
@@ -20,17 +18,40 @@ public class ReportsOverviewLayout extends ReportsOverview {
 
 			@Override
 			public void selectionChange(SingleSelectionEvent<String> event) {
-
+				updateLayout();
 			}
 		});
 
-		fillVersionSelector(null);
+		projectSelector.addSelectionListener(new SingleSelectionListener<String>() {
 
+			@Override
+			public void selectionChange(SingleSelectionEvent<String> event) {
+				updateVersions();
+				updateLayout();
+			}
+
+		});
+
+		updateProjects();
+		projectSelector.setSelectedItem("Project 1");
+		updateVersions();
+
+		distributionBar.setValues(new int[] { 5, 15, 100 });
 	}
 
-	private void fillVersionSelector(List<String> values) {
+	private void updateProjects() {
+		projectSelector.clear();
+		projectSelector.setItems("Project 1", "Project 2", "Project 3");
+	}
+
+	private void updateVersions() {
 		versionSelector.clear();
-		 versionSelector.setItems(values);
-		versionSelector.setItems("version 1", "version 3", "version 2");
+		String projectName = projectSelector.getValue();
+		versionSelector.setItems(projectName + " version 1", projectName + " version 2", projectName + " version 3");
+	}
+
+	private void updateLayout() {
+		distributionBar.setValues(new int[] { (int) Math.round((Math.random() * 100)),
+				(int) Math.round((Math.random() * 100)), (int) Math.round((Math.random() * 100)) });
 	}
 }

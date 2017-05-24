@@ -2,35 +2,105 @@
 <html>
  <head>
   <meta charset="UTF-8">
-  <meta name="design-properties" content="{&quot;RULERS_VISIBLE&quot;:true,&quot;GUIDELINES_VISIBLE&quot;:false,&quot;SNAP_TO_OBJECTS&quot;:true,&quot;SNAP_TO_GRID&quot;:true,&quot;SNAPPING_DISTANCE&quot;:10,&quot;JAVA_SOURCES_ROOT&quot;:&quot;src/main/java&quot;,&quot;THEME&quot;:&quot;mytheme&quot;}">
+  <meta name="design-properties" content="{&quot;RULERS_VISIBLE&quot;:true,&quot;GUIDELINES_VISIBLE&quot;:true,&quot;SNAP_TO_OBJECTS&quot;:true,&quot;SNAP_TO_GRID&quot;:true,&quot;SNAPPING_DISTANCE&quot;:10,&quot;JAVA_SOURCES_ROOT&quot;:&quot;src/main/java&quot;,&quot;THEME&quot;:&quot;mytheme&quot;}">
   <meta name="vaadin-version" content="8.0.5">
+  <meta name="package-mapping" content="my_vaadin_distributionbar:my.vaadin.distributionbar">
  </head>
  <body>
-  <vaadin-vertical-layout size-full>
-   <vaadin-vertical-layout spacing="false" height="74px" margin="false" _id="headerContainer">
-    <vaadin-horizontal-layout width-full :expand>
-     <vaadin-native-select width="400px" data-item-type="java.lang.String" _id="projectSelector" :expand>
-      <option item="Option1">Option 1</option>
-      <option item="Option2">Option 2</option>
-      <option item="Option3">Option 3</option>
+  <vaadin-vertical-layout style-name="main-container" size-full>
+   <vaadin-horizontal-layout style-name="top-header" spacing="false" width-full height="25px" _id="topHeader" :center></vaadin-horizontal-layout>
+   <vaadin-vertical-layout style-name="bugrap-padding" spacing="false" height="167px" _id="headerContainer">
+    <vaadin-horizontal-layout spacing="false" width-full height="35px" _id="firstLineHeader" :expand>
+     <vaadin-native-select width="75%" data-item-type="java.lang.String" _id="projectSelector" :expand>
+      <option item="Option1">Project 1</option>
+      <option item="Option2">Project 2</option>
+      <option item="Option3">Project 3</option>
      </vaadin-native-select>
-     <vaadin-label icon="fonticon://Vaadin-Icons/e80d" caption="Marc Manager" responsive plain-text _id="userProfile" :middle :right></vaadin-label>
-     <vaadin-label icon="fonticon://Vaadin-Icons/e6ac" caption="Logout" style-name="logout" plain-text :middle :right></vaadin-label>
+     <vaadin-label icon="fonticon://Vaadin-Icons/e80d" caption="Marc Manager" style-name="profile" responsive height-full plain-text _id="userProfile" :middle></vaadin-label>
+     <vaadin-label icon="fonticon://Vaadin-Icons/e6ac" caption="Logout" height-full plain-text _id="logout" :middle></vaadin-label>
     </vaadin-horizontal-layout>
-    <vaadin-horizontal-layout width-full height="37px" :expand></vaadin-horizontal-layout>
+    <vaadin-horizontal-layout spacing="false" width-full height="37px" _id="manageButtonsContainer" :expand>
+     <vaadin-button icon="fonticon://Vaadin-Icons/e68a" plain-text _id="reportBug" :middle>
+       Report a bug 
+     </vaadin-button>
+     <vaadin-button icon="fonticon://Vaadin-Icons/e6ae" plain-text _id="requestFeature" :middle>
+       Request a feature 
+     </vaadin-button>
+     <vaadin-button icon="fonticon://Vaadin-Icons/e764" plain-text _id="requestFeature1" :middle>
+       Manage project 
+     </vaadin-button>
+     <vaadin-text-field style-name="search-field" placeholder="Search reports..." width-full _id="searchField" :middle :right :expand></vaadin-text-field>
+    </vaadin-horizontal-layout>
+    <vaadin-horizontal-layout spacing="false" width-full height="35px" _id="versionsContainer">
+     <vaadin-label width="90px" plain-text :middle>
+       Reports for 
+     </vaadin-label>
+     <vaadin-native-select width="220px" data-item-type="java.lang.String" _id="versionSelector" :expand>
+      <option item="Option1">Option 1</option>
+     </vaadin-native-select>
+     <my_vaadin_distributionbar-distribution-bar size-full _id="distributionBar" :middle :expand></my_vaadin_distributionbar-distribution-bar>
+    </vaadin-horizontal-layout>
+    <vaadin-horizontal-layout width-full height="25px">
+     <vaadin-label plain-text>
+       Assingnees 
+     </vaadin-label>
+    </vaadin-horizontal-layout>
    </vaadin-vertical-layout>
-   <vaadin-horizontal-layout width-full height="35px" _id="versionsContainer">
-    <vaadin-label plain-text :middle>
-      Reports for 
-    </vaadin-label>
-    <vaadin-native-select width="120px" data-item-type="java.lang.String" _id="versionSelector" :expand>
-     <option item="Option1">Option 1</option>
-     <option item="Option2">Option 2</option>
-     <option item="Option3">Option 3</option>
-    </vaadin-native-select>
+   <vaadin-horizontal-layout spacing="false" size-full _id="contentContainer" :expand>
+    <vaadin-grid size-full :expand>
+     <table>
+      <colgroup>
+       <col column-id="project" sortable="false">
+       <col column-id="status" sortable="false">
+      </colgroup>
+      <thead>
+       <tr default>
+        <th plain-text column-ids="project">Project</th>
+        <th plain-text column-ids="status">Status</th>
+       </tr>
+      </thead>
+      <tbody>
+       <tr item="project1">
+        <td>Customer Project 1</td>
+        <td>OK</td>
+       </tr>
+       <tr item="project2">
+        <td>Customer Project 2</td>
+        <td>OK</td>
+       </tr>
+       <tr item="project3">
+        <td>Customer Project 3</td>
+        <td>OK</td>
+       </tr>
+       <tr item="project4">
+        <td>Customer Project 4</td>
+        <td>OK</td>
+       </tr>
+       <tr item="project5">
+        <td>Customer Project 5</td>
+        <td>OK</td>
+       </tr>
+       <tr item="project6">
+        <td>Customer Project 6</td>
+        <td>OK</td>
+       </tr>
+       <tr item="project7">
+        <td>Customer Project 7</td>
+        <td>OK</td>
+       </tr>
+       <tr item="project8">
+        <td>Customer Project 8</td>
+        <td>OK</td>
+       </tr>
+       <tr item="project9">
+        <td>Customer Project 9</td>
+        <td>OK</td>
+       </tr>
+      </tbody>
+     </table>
+    </vaadin-grid>
    </vaadin-horizontal-layout>
-   <vaadin-horizontal-layout width-full height="50px" _id="filtersContainer"></vaadin-horizontal-layout>
-   <vaadin-horizontal-layout size-full :expand></vaadin-horizontal-layout>
+   <vaadin-horizontal-layout style-name="bottom-footer" spacing="false" width-full height="25px" _id="bottomFooter" :bottom :center></vaadin-horizontal-layout>
   </vaadin-vertical-layout>
  </body>
 </html>
