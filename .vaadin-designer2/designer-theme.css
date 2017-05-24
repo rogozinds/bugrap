@@ -12536,3 +12536,27 @@ div.v-layout.v-horizontal.v-widget {
 .mytheme .bugrap-padding {
 	padding: 10px;
 }
+
+.mytheme .bugrap-btn {
+	border: none;
+	border-radius: 0;
+	background: none;
+	height: 25px;
+}
+
+.mytheme .bugrap-border-right {
+	border-right: 1px solid;
+}
+
+.mytheme .bugrap-badge {
+	background: #919191;
+	border: none;
+	color: white;
+	border-radius: 10px;
+	font-style: bold;
+	text-align: center;
+}
+
+.mytheme .v-select {
+	border: none;
+}

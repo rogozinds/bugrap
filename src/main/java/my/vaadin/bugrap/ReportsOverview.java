@@ -27,16 +27,19 @@ public class ReportsOverview extends VerticalLayout {
 	protected VerticalLayout headerContainer;
 	protected HorizontalLayout firstLineHeader;
 	protected NativeSelect<java.lang.String> projectSelector;
-	protected Label userProfile;
-	protected Label logout;
+	protected HorizontalLayout userButtonsContainer;
+	protected Button accountBtn;
+	protected Button logoutBtn;
 	protected HorizontalLayout manageButtonsContainer;
 	protected Button reportBug;
 	protected Button requestFeature;
-	protected Button requestFeature1;
+	protected Button manageProjectsBtn;
+	protected Label projectCountLbl;
 	protected TextField searchField;
 	protected HorizontalLayout versionsContainer;
 	protected NativeSelect<java.lang.String> versionSelector;
 	protected DistributionBar distributionBar;
+	protected HorizontalLayout filtersContainer;
 	protected HorizontalLayout contentContainer;
 	protected HorizontalLayout bottomFooter;
 

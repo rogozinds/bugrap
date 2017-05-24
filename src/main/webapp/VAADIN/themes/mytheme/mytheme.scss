@@ -70,5 +70,33 @@
   		padding: 10px;
   }
   
+  .v-button{
+  //	border: none;	
+  }
+ 
+ .bugrap-btn {
+ 	border: none;
+  	border-radius: 0;	
+  	background: none;	
+  	height: 25px;
+ }
+ 
+ .bugrap-border-right{
+ 	    border-right: 1px solid;
+
+ }
+
+	.bugrap-badge{
+		background: #919191;
+		border: none;
+		color: white;
+		border-radius: 10px;
+		font-style: bold;
+		text-align: center;
+	}
+
+.v-select {
+    border: none;
+}
   
 }

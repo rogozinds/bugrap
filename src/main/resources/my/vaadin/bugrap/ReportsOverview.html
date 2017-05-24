@@ -2,52 +2,61 @@
 <html>
  <head>
   <meta charset="UTF-8">
-  <meta name="design-properties" content="{&quot;RULERS_VISIBLE&quot;:true,&quot;GUIDELINES_VISIBLE&quot;:true,&quot;SNAP_TO_OBJECTS&quot;:true,&quot;SNAP_TO_GRID&quot;:true,&quot;SNAPPING_DISTANCE&quot;:10,&quot;JAVA_SOURCES_ROOT&quot;:&quot;src/main/java&quot;,&quot;THEME&quot;:&quot;mytheme&quot;}">
+  <meta name="design-properties" content="{&quot;RULERS_VISIBLE&quot;:true,&quot;GUIDELINES_VISIBLE&quot;:false,&quot;SNAP_TO_OBJECTS&quot;:true,&quot;SNAP_TO_GRID&quot;:true,&quot;SNAPPING_DISTANCE&quot;:10,&quot;JAVA_SOURCES_ROOT&quot;:&quot;src/main/java&quot;,&quot;THEME&quot;:&quot;mytheme&quot;}">
   <meta name="vaadin-version" content="8.0.5">
   <meta name="package-mapping" content="my_vaadin_distributionbar:my.vaadin.distributionbar">
  </head>
  <body>
-  <vaadin-vertical-layout style-name="main-container" size-full>
+  <vaadin-vertical-layout spacing="false" responsive size-full margin="false">
    <vaadin-horizontal-layout style-name="top-header" spacing="false" width-full height="25px" _id="topHeader" :center></vaadin-horizontal-layout>
-   <vaadin-vertical-layout style-name="bugrap-padding" spacing="false" height="167px" _id="headerContainer">
-    <vaadin-horizontal-layout spacing="false" width-full height="35px" _id="firstLineHeader" :expand>
-     <vaadin-native-select width="75%" data-item-type="java.lang.String" _id="projectSelector" :expand>
-      <option item="Option1">Project 1</option>
-      <option item="Option2">Project 2</option>
-      <option item="Option3">Project 3</option>
+   <vaadin-vertical-layout style-name="bugrap-padding" spacing="false" height="167px" margin="false" _id="headerContainer">
+    <vaadin-horizontal-layout spacing="false" responsive width-full height="35px" _id="firstLineHeader" :expand>
+     <vaadin-native-select empty-selection-allowed="false" width="75%" data-item-type="java.lang.String" _id="projectSelector" :expand>
+      <option item="Project1">Project 1</option>
      </vaadin-native-select>
-     <vaadin-label icon="fonticon://Vaadin-Icons/e80d" caption="Marc Manager" style-name="profile" responsive height-full plain-text _id="userProfile" :middle></vaadin-label>
-     <vaadin-label icon="fonticon://Vaadin-Icons/e6ac" caption="Logout" height-full plain-text _id="logout" :middle></vaadin-label>
+     <vaadin-horizontal-layout spacing="false" _id="userButtonsContainer">
+      <vaadin-button icon="fonticon://Vaadin-Icons/e80d" style-name="bugrap-border-right bugrap-btn" plain-text _id="accountBtn" :middle :right>
+        Marc Manager 
+      </vaadin-button>
+      <vaadin-button icon="fonticon://Vaadin-Icons/e6ac" style-name="bugrap-btn" plain-text _id="logoutBtn" :middle :right>
+        Logout 
+      </vaadin-button>
+     </vaadin-horizontal-layout>
     </vaadin-horizontal-layout>
-    <vaadin-horizontal-layout spacing="false" width-full height="37px" _id="manageButtonsContainer" :expand>
-     <vaadin-button icon="fonticon://Vaadin-Icons/e68a" plain-text _id="reportBug" :middle>
-       Report a bug 
-     </vaadin-button>
-     <vaadin-button icon="fonticon://Vaadin-Icons/e6ae" plain-text _id="requestFeature" :middle>
-       Request a feature 
-     </vaadin-button>
-     <vaadin-button icon="fonticon://Vaadin-Icons/e764" plain-text _id="requestFeature1" :middle>
-       Manage project 
-     </vaadin-button>
-     <vaadin-text-field style-name="search-field" placeholder="Search reports..." width-full _id="searchField" :middle :right :expand></vaadin-text-field>
+    <vaadin-horizontal-layout spacing="false" responsive width-full height="37px" _id="manageButtonsContainer" :expand>
+     <vaadin-horizontal-layout spacing="false" :middle :expand>
+      <vaadin-button icon="fonticon://Vaadin-Icons/e68a" style-name="bugrap-btn bugrap-border-right" plain-text _id="reportBug">
+        Report a bug 
+      </vaadin-button>
+      <vaadin-button icon="fonticon://Vaadin-Icons/e6ae" primary-style-name="" style-name="bugrap-border-right bugrap-btn" tabindex="1" plain-text _id="requestFeature">
+        Request a feature 
+      </vaadin-button>
+      <vaadin-button icon="fonticon://Vaadin-Icons/e764" style-name="bugrap-btn" tabindex="2" plain-text _id="manageProjectsBtn">
+        Manage projects 
+      </vaadin-button>
+      <vaadin-label style-name="bugrap-badge" width="40px" plain-text _id="projectCountLbl" :middle>
+        123 
+      </vaadin-label>
+     </vaadin-horizontal-layout>
+     <vaadin-text-field style-name="search-field" placeholder="Search reports..." width="80%" _id="searchField" :middle :right :expand></vaadin-text-field>
     </vaadin-horizontal-layout>
-    <vaadin-horizontal-layout spacing="false" width-full height="35px" _id="versionsContainer">
-     <vaadin-label width="90px" plain-text :middle>
+    <vaadin-horizontal-layout responsive width-full height="40px" _id="versionsContainer" :expand>
+     <vaadin-label plain-text :middle>
        Reports for 
      </vaadin-label>
-     <vaadin-native-select width="220px" data-item-type="java.lang.String" _id="versionSelector" :expand>
+     <vaadin-native-select empty-selection-allowed="false" width="220px" data-item-type="java.lang.String" _id="versionSelector">
       <option item="Option1">Option 1</option>
      </vaadin-native-select>
-     <my_vaadin_distributionbar-distribution-bar size-full _id="distributionBar" :middle :expand></my_vaadin_distributionbar-distribution-bar>
+     <my_vaadin_distributionbar-distribution-bar width-full _id="distributionBar" :middle :expand></my_vaadin_distributionbar-distribution-bar>
     </vaadin-horizontal-layout>
-    <vaadin-horizontal-layout width-full height="25px">
+    <vaadin-horizontal-layout responsive width-full height="25px" _id="filtersContainer">
      <vaadin-label plain-text>
-       Assingnees 
+       Assignees 
      </vaadin-label>
     </vaadin-horizontal-layout>
    </vaadin-vertical-layout>
    <vaadin-horizontal-layout spacing="false" size-full _id="contentContainer" :expand>
-    <vaadin-grid size-full :expand>
+    <vaadin-grid column-resize-mode="simple" size-full :expand>
      <table>
       <colgroup>
        <col column-id="project" sortable="false">

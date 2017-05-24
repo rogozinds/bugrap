@@ -28,7 +28,7 @@ public class MyUI extends UI {
 		final VerticalLayout mainContainer = new VerticalLayout();
 
 		mainContainer.addComponent(new ReportsOverviewLayout());
-
+		mainContainer.setSizeFull();
 		setContent(mainContainer);
 	}
 
