@@ -1,6 +1,7 @@
 package my.vaadin.bugrap.layouts;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -11,6 +12,7 @@ import com.vaadin.event.selection.SelectionListener;
 import com.vaadin.event.selection.SingleSelectionEvent;
 import com.vaadin.event.selection.SingleSelectionListener;
 import com.vaadin.server.SerializablePredicate;
+import com.vaadin.ui.Grid.Column;
 
 import my.vaadin.bugrap.Report;
 import my.vaadin.bugrap.ReportProvider;
@@ -56,8 +58,6 @@ public class ReportsOverviewLayout extends ReportsOverview {
 	private void initReportsTable() {
 		// DataProvider dataProvider = new ;
 		// reportsTable.setDataProvider(dataProvider );
-		reportsGrid.getColumn("project").setHidden(true);
-		// reportsGrid.getColumn("status").setHidden(true);
 
 		reportsGrid.addSelectionListener(new SelectionListener<Report>() {
 
@@ -69,6 +69,9 @@ public class ReportsOverviewLayout extends ReportsOverview {
 
 		dp = new ListDataProvider<>(ReportProvider.getAllReports());
 		reportsGrid.setDataProvider(dp);
+
+		((Column<Report, Date>) reportsGrid.getColumn("reported")).setRenderer(new RelativeDateRenderer());
+		((Column<Report, Date>) reportsGrid.getColumn("lastModified")).setRenderer(new RelativeDateRenderer());
 	}
 
 	private void updateProjects() {
@@ -77,6 +80,7 @@ public class ReportsOverviewLayout extends ReportsOverview {
 		dp.getItems().stream().forEach(a -> projectNames.add(a.getProject()));
 		projectSelector.setItems(projectNames);
 		projectSelector.setSelectedItem(projectNames.iterator().next());
+		projectCountLbl.setValue("" + projectNames.size());
 	}
 
 	private void updateVersions() {

@@ -1,5 +1,7 @@
 package my.vaadin.bugrap;
 
+import java.util.Date;
+
 public class Report {
 
 	public enum IssueType {
@@ -37,8 +39,8 @@ public class Report {
 	private IssueType type;
 	private String summary;
 	private String assignedTo;
-	private long lastModified;
-	private long reported;
+	private Date lastModified;
+	private Date reported;
 	private Status status;
 
 	public Report() {
@@ -46,13 +48,14 @@ public class Report {
 	}
 
 	public Report(String project, String version, int priority, IssueType type, String summary, String assignedTo,
-			long lastModified, long reported, Status status) {
+			Date lastModified, Date reported, Status status) {
 		this.project = project;
 		this.version = version;
 		this.priority = priority;
 		this.type = type;
 		this.summary = summary;
 		this.assignedTo = assignedTo;
+		this.lastModified = lastModified;
 		this.reported = reported;
 		this.status = status;
 	}
@@ -105,19 +108,19 @@ public class Report {
 		this.assignedTo = assignedTo;
 	}
 
-	public long getLastModified() {
+	public Date getLastModified() {
 		return lastModified;
 	}
 
-	public void setLastModified(long lastModified) {
+	public void setLastModified(Date lastModified) {
 		this.lastModified = lastModified;
 	}
 
-	public long getReported() {
+	public Date getReported() {
 		return reported;
 	}
 
-	public void setReported(long reported) {
+	public void setReported(Date reported) {
 		this.reported = reported;
 	}
 
