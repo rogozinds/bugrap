@@ -12,15 +12,19 @@ import com.vaadin.event.selection.SelectionListener;
 import com.vaadin.event.selection.SingleSelectionEvent;
 import com.vaadin.event.selection.SingleSelectionListener;
 import com.vaadin.server.SerializablePredicate;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Grid.Column;
 
 import my.vaadin.bugrap.Report;
+import my.vaadin.bugrap.Report.Status;
 import my.vaadin.bugrap.ReportProvider;
 import my.vaadin.bugrap.ReportsOverview;
 
 public class ReportsOverviewLayout extends ReportsOverview {
 
 	private static final String ALL_VERSIONS = "All versions";
+
 	private ListDataProvider<Report> dp;
 
 	public ReportsOverviewLayout() {
@@ -30,12 +34,14 @@ public class ReportsOverviewLayout extends ReportsOverview {
 	}
 
 	private void init() {
+		accountBtn.setCaption(ReportProvider.USER_NAME);
+		initFiltersButtons();
 		initReportsTable();
 		versionSelector.addSelectionListener(new SingleSelectionListener<String>() {
 
 			@Override
 			public void selectionChange(SingleSelectionEvent<String> event) {
-				updateLayout();
+				updateData();
 			}
 		});
 
@@ -52,6 +58,54 @@ public class ReportsOverviewLayout extends ReportsOverview {
 		// projectSelector.setSelectedItem("Project 1");
 
 		distributionBar.setValues(new int[] { 5, 15, 100 });
+	}
+
+	private void initFiltersButtons() {
+		onlyMeBtn.setEnabled(false);
+		openBtn.setEnabled(false);
+		onlyMeBtn.addClickListener(new ClickListener() {
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				everyoneBtn.setEnabled(true);
+				updateData();
+			}
+		});
+		everyoneBtn.addClickListener(new ClickListener() {
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				onlyMeBtn.setEnabled(true);
+				updateData();
+			}
+		});
+		openBtn.addClickListener(new ClickListener() {
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				allKindsBtn.setEnabled(true);
+				customBtn.setEnabled(true);
+				updateData();
+			}
+		});
+		allKindsBtn.addClickListener(new ClickListener() {
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				openBtn.setEnabled(true);
+				customBtn.setEnabled(true);
+				updateData();
+			}
+		});
+		customBtn.addClickListener(new ClickListener() {
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				allKindsBtn.setEnabled(true);
+				openBtn.setEnabled(true);
+				updateData();
+			}
+		});
 	}
 
 	@SuppressWarnings({ "unchecked", "serial" })
@@ -100,9 +154,10 @@ public class ReportsOverviewLayout extends ReportsOverview {
 			versions.add(a.getVersion());
 	}
 
-	private void updateLayout() {
+	private void updateData() {
 		if (reportsGrid.getColumn("version") != null && (versionSelector.getValue() != null))
 			reportsGrid.getColumn("version").setHidden(!versionSelector.getValue().equals(ALL_VERSIONS));
+
 		distributionBar.setValues(new int[] { (int) Math.round((Math.random() * 100)),
 				(int) Math.round((Math.random() * 100)), (int) Math.round((Math.random() * 100)) });
 
@@ -110,20 +165,40 @@ public class ReportsOverviewLayout extends ReportsOverview {
 	}
 
 	private SerializablePredicate<Report> getFilter() {
-		final String projectName = projectSelector.getValue();
-		final String version = versionSelector.getValue();
-
-		SerializablePredicate<Report> filter = new SerializablePredicate<Report>() {
+		return new SerializablePredicate<Report>() {
 
 			@Override
 			public boolean test(Report t) {
-				if (version.equals(ALL_VERSIONS))
-					return t.getProject().equals(projectName);
-				return t.getProject().equals(projectName) && t.getVersion().equals(version);
+				return testProject(t) && testVersion(t) && testUser(t) && testStatus(t);
 			}
 
 		};
+	}
 
-		return filter;
+	private boolean testStatus(Report t) {
+		if (!openBtn.isEnabled())
+			return t.getStatus() == Status.OPEN;
+
+		if (!allKindsBtn.isEnabled())
+			return true;
+
+		return false;
+	}
+
+	private boolean testProject(Report t) {
+		return t.getProject().equals(projectSelector.getValue());
+	}
+
+	private boolean testVersion(Report t) {
+		if (versionSelector.getValue().equals(ALL_VERSIONS))
+			return true;
+
+		return t.getVersion().equals(versionSelector.getValue());
+	}
+
+	private boolean testUser(Report t) {
+		if (!everyoneBtn.isEnabled())
+			return true;
+		return (accountBtn.getCaption() != null) && accountBtn.getCaption().equals(t.getAssignedTo());
 	}
 }

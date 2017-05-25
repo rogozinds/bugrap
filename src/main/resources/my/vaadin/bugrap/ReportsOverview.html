@@ -16,7 +16,7 @@
      </vaadin-native-select>
      <vaadin-horizontal-layout spacing="false" _id="userButtonsContainer">
       <vaadin-button icon="fonticon://Vaadin-Icons/e80d" style-name="bugrap-border-right bugrap-btn" plain-text _id="accountBtn" :middle :right>
-        Marc Manager 
+        Marc 
       </vaadin-button>
       <vaadin-button icon="fonticon://Vaadin-Icons/e6ac" style-name="bugrap-btn" plain-text _id="logoutBtn" :middle :right>
         Logout 
@@ -49,10 +49,33 @@
      </vaadin-native-select>
      <my_vaadin_distributionbar-distribution-bar width-full _id="distributionBar" :middle :expand></my_vaadin_distributionbar-distribution-bar>
     </vaadin-horizontal-layout>
-    <vaadin-horizontal-layout responsive width-full height="25px" _id="filtersContainer">
-     <vaadin-label plain-text>
+    <vaadin-horizontal-layout responsive width-full height="30px" _id="filtersContainer">
+     <vaadin-label plain-text :middle>
        Assignees 
      </vaadin-label>
+     <vaadin-horizontal-layout spacing="false" :middle>
+      <vaadin-button disable-on-click style-name="bugrap-filter-btn bugrap-filter-left-btn" plain-text _id="onlyMeBtn">
+        Only me 
+      </vaadin-button>
+      <vaadin-button disable-on-click style-name="bugrap-filter-btn bugrap-filter-right-btn" plain-text _id="everyoneBtn">
+        Everyone 
+      </vaadin-button>
+     </vaadin-horizontal-layout>
+     <vaadin-label plain-text :middle>
+       Status 
+     </vaadin-label>
+     <vaadin-horizontal-layout spacing="false" :middle>
+      <vaadin-button disable-on-click style-name="bugrap-filter-btn bugrap-filter-left-btn" plain-text _id="openBtn">
+        Open 
+      </vaadin-button>
+      <vaadin-button disable-on-click style-name="bugrap-filter-btn bugrap-filter-middle-btn" plain-text _id="allKindsBtn">
+        All kinds 
+      </vaadin-button>
+      <vaadin-button disable-on-click style-name="bugrap-filter-btn bugrap-filter-right-btn" plain-text _id="customBtn">
+        Custom 
+      </vaadin-button>
+     </vaadin-horizontal-layout>
+     <vaadin-horizontal-layout width-full :expand></vaadin-horizontal-layout>
     </vaadin-horizontal-layout>
    </vaadin-vertical-layout>
    <vaadin-horizontal-layout spacing="false" size-full _id="contentContainer" :expand>

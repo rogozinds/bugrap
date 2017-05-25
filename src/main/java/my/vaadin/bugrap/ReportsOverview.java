@@ -41,6 +41,11 @@ public class ReportsOverview extends VerticalLayout {
 	protected NativeSelect<java.lang.String> versionSelector;
 	protected DistributionBar distributionBar;
 	protected HorizontalLayout filtersContainer;
+	protected Button onlyMeBtn;
+	protected Button everyoneBtn;
+	protected Button openBtn;
+	protected Button allKindsBtn;
+	protected Button customBtn;
 	protected HorizontalLayout contentContainer;
 	protected Grid<my.vaadin.bugrap.Report> reportsGrid;
 	protected HorizontalLayout bottomFooter;

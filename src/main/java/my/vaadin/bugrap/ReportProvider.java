@@ -8,6 +8,8 @@ import my.vaadin.bugrap.Report.IssueType;
 import my.vaadin.bugrap.Report.Status;
 
 public class ReportProvider {
+	
+	public static final String USER_NAME = "Marc Manager";
 
 	private final static String PROJECT = "Project ";
 	private final static String VERSION = "ver. ";
@@ -23,10 +25,10 @@ public class ReportProvider {
 		for (int i = 0; i < 40; i++) {
 			allReports.add(
 					new Report(PROJECT + (i % 3 + 1), VERSION + (i % 5 + 1), (i % 4 + 1), IssueType.BUG, SUMMARY + i,
-							"Marc Manager", null, new Date(116, i % 12, i % 28, i % 24, i % 60, i % 10), Status.FIXED));
+							USER_NAME, null, new Date(116, i % 12, i % 28, i % 24, i % 60, i % 10), Status.FIXED));
 			allReports.add(
 					new Report(PROJECT + (i % 7 + 1), VERSION + (i % 6 + 1), (i % 5 + 1), IssueType.BUG, SUMMARY + i,
-							"Marc Manager", null, new Date(), Status.OPEN));
+							"some another manager", null, new Date(), Status.OPEN));
 		}
 
 		return allReports;
