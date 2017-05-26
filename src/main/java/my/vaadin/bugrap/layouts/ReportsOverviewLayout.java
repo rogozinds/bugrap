@@ -13,7 +13,6 @@ import com.vaadin.event.selection.SelectionEvent;
 import com.vaadin.event.selection.SelectionListener;
 import com.vaadin.event.selection.SingleSelectionEvent;
 import com.vaadin.event.selection.SingleSelectionListener;
-import com.vaadin.server.Page;
 import com.vaadin.server.SerializablePredicate;
 import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Button.ClickEvent;
@@ -26,6 +25,7 @@ import my.vaadin.bugrap.Report;
 import my.vaadin.bugrap.Report.Status;
 import my.vaadin.bugrap.ReportProvider;
 import my.vaadin.bugrap.ReportsOverview;
+import my.vaadin.bugrap.utils.RelativeDateRenderer;
 
 public class ReportsOverviewLayout extends ReportsOverview {
 
@@ -46,6 +46,8 @@ public class ReportsOverviewLayout extends ReportsOverview {
 	}
 
 	private void init() {
+		mainSplitter.setMinSplitPosition(25, Unit.PERCENTAGE);
+		showReportDetails(false);
 		accountBtn.setCaption(ReportProvider.USER_NAME);
 		initFiltersButtons();
 		initReportsTable();
@@ -79,6 +81,18 @@ public class ReportsOverviewLayout extends ReportsOverview {
 	protected void updateDistributionBar() {
 		distributionBar.setValues(new int[] { (int) Math.round((Math.random() * 100)),
 				(int) Math.round((Math.random() * 100)), (int) Math.round((Math.random() * 100)) });
+	}
+
+	private void showReportDetails(boolean value) {
+		if (value) {
+			mainSplitter.setLocked(false);
+			if (mainSplitter.getSplitPosition() > 90)
+				mainSplitter.setSplitPosition(50, Unit.PERCENTAGE);
+		} else {
+			mainSplitter.setLocked(true);
+			mainSplitter.setSplitPosition(100, Unit.PERCENTAGE);
+		}
+
 	}
 
 	private void initFiltersButtons() {
@@ -152,7 +166,13 @@ public class ReportsOverviewLayout extends ReportsOverview {
 
 			@Override
 			public void selectionChange(SelectionEvent<Report> event) {
+				if (event.getAllSelectedItems().size() == 0)
+					showReportDetails(false);
 
+				if (event.getAllSelectedItems().size() == 1)
+					showReportDetails(true);
+
+				reportDetails.setReports(event.getAllSelectedItems());
 			}
 		});
 
@@ -213,6 +233,7 @@ public class ReportsOverviewLayout extends ReportsOverview {
 	}
 
 	private void updateData() {
+		reportsGrid.deselectAll();
 		dp.setFilter(getFilter());
 	}
 

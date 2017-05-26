@@ -4,6 +4,13 @@ import java.util.Date;
 
 public class Report {
 
+	@Override
+	public String toString() {
+		return "Report [project=" + project + ", version=" + version + ", priority=" + priority + ", type=" + type
+				+ ", summary=" + summary + ", assignedTo=" + assignedTo + ", lastModified=" + lastModified
+				+ ", reported=" + reported + ", status=" + status + "]";
+	}
+
 	public enum IssueType {
 		BUG("Bug"), FEATURE("Feature");
 

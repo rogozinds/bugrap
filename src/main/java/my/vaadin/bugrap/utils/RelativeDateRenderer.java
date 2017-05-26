@@ -1,4 +1,4 @@
-package my.vaadin.bugrap.layouts;
+package my.vaadin.bugrap.utils;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;

@@ -4,7 +4,9 @@
   <meta charset="UTF-8">
   <meta name="design-properties" content="{&quot;RULERS_VISIBLE&quot;:true,&quot;GUIDELINES_VISIBLE&quot;:false,&quot;SNAP_TO_OBJECTS&quot;:true,&quot;SNAP_TO_GRID&quot;:true,&quot;SNAPPING_DISTANCE&quot;:10,&quot;JAVA_SOURCES_ROOT&quot;:&quot;src/main/java&quot;,&quot;THEME&quot;:&quot;mytheme&quot;}">
   <meta name="vaadin-version" content="8.0.5">
+  <meta name="package-mapping" content="my_vaadin_bugrap_layouts:my.vaadin.bugrap.layouts">
   <meta name="package-mapping" content="my_vaadin_distributionbar:my.vaadin.distributionbar">
+  <meta name="package-mapping" content="my_vaadin_bugrap:my.vaadin.bugrap">
  </head>
  <body>
   <vaadin-vertical-layout spacing="false" responsive size-full margin="false">
@@ -81,33 +83,36 @@
      <vaadin-horizontal-layout width-full :expand></vaadin-horizontal-layout>
     </vaadin-horizontal-layout>
    </vaadin-vertical-layout>
-   <vaadin-horizontal-layout spacing="false" size-full _id="contentContainer" :expand>
-    <vaadin-grid column-resize-mode="simple" responsive size-full data-item-type="my.vaadin.bugrap.Report" _id="reportsGrid" :expand>
-     <table>
-      <colgroup>
-       <col column-id="version" sortable>
-       <col column-id="priority" sortable>
-       <col column-id="type" sortable>
-       <col column-id="summary" sortable>
-       <col column-id="assignedTo" sortable>
-       <col column-id="lastModified" sortable>
-       <col column-id="reported" sortable>
-      </colgroup>
-      <thead>
-       <tr default>
-        <th plain-text column-ids="version">VERSION</th>
-        <th plain-text column-ids="priority">PRIORITY</th>
-        <th plain-text column-ids="type">TYPE</th>
-        <th plain-text column-ids="summary">SUMMARY</th>
-        <th plain-text column-ids="assignedTo">ASSIGNED TO</th>
-        <th plain-text column-ids="lastModified">LAST MODIFIED</th>
-        <th plain-text column-ids="reported">REPORTED</th>
-       </tr>
-      </thead>
-      <tbody></tbody>
-     </table>
-    </vaadin-grid>
-   </vaadin-horizontal-layout>
+   <vaadin-vertical-split-panel _id="mainSplitter" :expand>
+    <vaadin-horizontal-layout spacing="false" size-full _id="contentContainer">
+     <vaadin-grid column-resize-mode="simple" responsive size-full data-item-type="my.vaadin.bugrap.Report" _id="reportsGrid" :expand>
+      <table>
+       <colgroup>
+        <col column-id="version" sortable>
+        <col column-id="priority" sortable>
+        <col column-id="type" sortable>
+        <col column-id="summary" sortable>
+        <col column-id="assignedTo" sortable>
+        <col column-id="lastModified" sortable>
+        <col column-id="reported" sortable>
+       </colgroup>
+       <thead>
+        <tr default>
+         <th plain-text column-ids="version">VERSION</th>
+         <th plain-text column-ids="priority">PRIORITY</th>
+         <th plain-text column-ids="type">TYPE</th>
+         <th plain-text column-ids="summary">SUMMARY</th>
+         <th plain-text column-ids="assignedTo">ASSIGNED TO</th>
+         <th plain-text column-ids="lastModified">LAST MODIFIED</th>
+         <th plain-text column-ids="reported">REPORTED</th>
+        </tr>
+       </thead>
+       <tbody></tbody>
+      </table>
+     </vaadin-grid>
+    </vaadin-horizontal-layout>
+    <my_vaadin_bugrap_layouts-report-details-layout size-full _id="reportDetails"></my_vaadin_bugrap_layouts-report-details-layout>
+   </vaadin-vertical-split-panel>
    <vaadin-horizontal-layout style-name="bottom-footer" spacing="false" width-full height="25px" _id="bottomFooter" :bottom :center></vaadin-horizontal-layout>
   </vaadin-vertical-layout>
  </body>

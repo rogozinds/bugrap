@@ -9,7 +9,9 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.VerticalSplitPanel;
 import com.vaadin.ui.declarative.Design;
+import my.vaadin.bugrap.layouts.ReportDetailsLayout;
 import my.vaadin.distributionbar.DistributionBar;
 
 /** 
@@ -47,8 +49,10 @@ public class ReportsOverview extends VerticalLayout {
 	protected Button allKindsBtn;
 	protected VerticalLayout customContainer;
 	protected Button customBtn;
+	protected VerticalSplitPanel mainSplitter;
 	protected HorizontalLayout contentContainer;
 	protected Grid<my.vaadin.bugrap.Report> reportsGrid;
+	protected ReportDetailsLayout reportDetails;
 	protected HorizontalLayout bottomFooter;
 
 	public ReportsOverview() {

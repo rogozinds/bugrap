@@ -121,6 +121,13 @@
 	border-bottom-left-radius: 10px;	
 	}
  
+.bugrap-report-name{
+	font-style: bold;	
+}
 
+.bugrap-properties-style{
+	@include linear-gradient(0deg, #CBCBCB, #EBEBEB);
+	padding: 5px;
+	}
 
 }
