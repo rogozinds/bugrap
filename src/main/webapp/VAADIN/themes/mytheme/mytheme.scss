@@ -104,11 +104,11 @@
 	background: #EAEAEA;
 	}
 
-.bugrap-filter-btn.v-disabled{
+.bugrap-filter-btn.v-disabled, .bugrap-filter-btn.v-button-toggled{
 	opacity: 1.0;
+	filter: alpha(opacity=100) ;
 	@include linear-gradient(0deg, #A0A0A0, #7C7C7C);
 	color: white;
-	filter: alpha(opacity=100) ;
 	}
 
 .bugrap-filter-right-btn{

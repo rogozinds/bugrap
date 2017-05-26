@@ -12567,13 +12567,13 @@ div.v-layout.v-horizontal.v-widget {
 	background: #EAEAEA;
 }
 
-.mytheme .bugrap-filter-btn.v-disabled {
+.mytheme .bugrap-filter-btn.v-disabled, .mytheme .bugrap-filter-btn.v-button-toggled {
 	opacity: 1;
+	filter: alpha(opacity=100) ;
 	background-color: #A0A0A0;
 	background-image: -webkit-linear-gradient(-270deg, #A0A0A0, #7C7C7C);
 	background-image: linear-gradient(0deg,#A0A0A0, #7C7C7C);
 	color: white;
-	filter: alpha(opacity=100) ;
 }
 
 .mytheme .bugrap-filter-right-btn {

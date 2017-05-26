@@ -16,6 +16,11 @@ public class Report {
 		public String getName() {
 			return name;
 		}
+
+		@Override
+		public String toString() {
+			return name;
+		}
 	}
 
 	public enum Status {
@@ -29,6 +34,11 @@ public class Report {
 		}
 
 		public String getName() {
+			return name;
+		}
+
+		@Override
+		public String toString() {
 			return name;
 		}
 	}

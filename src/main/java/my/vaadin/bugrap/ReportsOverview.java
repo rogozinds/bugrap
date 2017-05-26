@@ -45,6 +45,7 @@ public class ReportsOverview extends VerticalLayout {
 	protected Button everyoneBtn;
 	protected Button openBtn;
 	protected Button allKindsBtn;
+	protected VerticalLayout customContainer;
 	protected Button customBtn;
 	protected HorizontalLayout contentContainer;
 	protected Grid<my.vaadin.bugrap.Report> reportsGrid;

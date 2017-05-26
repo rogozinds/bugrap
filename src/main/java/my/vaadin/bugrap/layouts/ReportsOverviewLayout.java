@@ -15,6 +15,8 @@ import com.vaadin.server.SerializablePredicate;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Grid.Column;
+import com.vaadin.ui.PopupView;
+import com.vaadin.ui.Window;
 
 import my.vaadin.bugrap.Report;
 import my.vaadin.bugrap.Report.Status;
@@ -26,6 +28,10 @@ public class ReportsOverviewLayout extends ReportsOverview {
 	private static final String ALL_VERSIONS = "All versions";
 
 	private ListDataProvider<Report> dp;
+
+	private Window customWnd = new Window();
+
+	private CustomStatusPopupContent content;
 
 	public ReportsOverviewLayout() {
 		super();
@@ -55,7 +61,6 @@ public class ReportsOverviewLayout extends ReportsOverview {
 		});
 
 		updateProjects();
-		// projectSelector.setSelectedItem("Project 1");
 
 		distributionBar.setValues(new int[] { 5, 15, 100 });
 	}
@@ -84,7 +89,7 @@ public class ReportsOverviewLayout extends ReportsOverview {
 			@Override
 			public void buttonClick(ClickEvent event) {
 				allKindsBtn.setEnabled(true);
-				customBtn.setEnabled(true);
+				customBtn.removeStyleName("toggled");
 				updateData();
 			}
 		});
@@ -93,26 +98,35 @@ public class ReportsOverviewLayout extends ReportsOverview {
 			@Override
 			public void buttonClick(ClickEvent event) {
 				openBtn.setEnabled(true);
-				customBtn.setEnabled(true);
+				customBtn.removeStyleName("toggled");
 				updateData();
 			}
 		});
+
+		content = new CustomStatusPopupContent() {
+			@Override
+			public void changeAction() {
+				updateData();
+			}
+		};
+		final PopupView customStatusPopup = new PopupView(content);
+		customContainer.addComponent(customStatusPopup);
 		customBtn.addClickListener(new ClickListener() {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
 				allKindsBtn.setEnabled(true);
 				openBtn.setEnabled(true);
+				customBtn.addStyleName("toggled");
+				customStatusPopup.setPopupVisible(true);
 				updateData();
 			}
 		});
+
 	}
 
 	@SuppressWarnings({ "unchecked", "serial" })
 	private void initReportsTable() {
-		// DataProvider dataProvider = new ;
-		// reportsTable.setDataProvider(dataProvider );
-
 		reportsGrid.addSelectionListener(new SelectionListener<Report>() {
 
 			@Override
@@ -182,7 +196,7 @@ public class ReportsOverviewLayout extends ReportsOverview {
 		if (!allKindsBtn.isEnabled())
 			return true;
 
-		return false;
+		return content.getSelectedItems().contains(t.getStatus());
 	}
 
 	private boolean testProject(Report t) {

@@ -71,9 +71,12 @@
       <vaadin-button disable-on-click style-name="bugrap-filter-btn bugrap-filter-middle-btn" plain-text _id="allKindsBtn">
         All kinds 
       </vaadin-button>
-      <vaadin-button disable-on-click style-name="bugrap-filter-btn bugrap-filter-right-btn" plain-text _id="customBtn">
-        Custom 
-      </vaadin-button>
+      <vaadin-vertical-layout size-auto margin="false" _id="customContainer">
+       <vaadin-button style-name="bugrap-filter-btn bugrap-filter-right-btn" _id="customBtn">
+         Custom 
+        <span class="v-icon Vaadin-Icons"></span>
+       </vaadin-button>
+      </vaadin-vertical-layout>
      </vaadin-horizontal-layout>
      <vaadin-horizontal-layout width-full :expand></vaadin-horizontal-layout>
     </vaadin-horizontal-layout>
