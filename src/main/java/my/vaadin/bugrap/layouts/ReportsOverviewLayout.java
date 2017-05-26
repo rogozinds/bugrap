@@ -6,12 +6,16 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.servlet.http.Cookie;
+
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.event.selection.SelectionEvent;
 import com.vaadin.event.selection.SelectionListener;
 import com.vaadin.event.selection.SingleSelectionEvent;
 import com.vaadin.event.selection.SingleSelectionListener;
+import com.vaadin.server.Page;
 import com.vaadin.server.SerializablePredicate;
+import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Grid.Column;
@@ -25,6 +29,8 @@ import my.vaadin.bugrap.ReportsOverview;
 
 public class ReportsOverviewLayout extends ReportsOverview {
 
+	private static final String COOKIE_VERSION = "bugrap-version";
+	private static final String COLUMN_VERSION = "version";
 	private static final String ALL_VERSIONS = "All versions";
 
 	private ListDataProvider<Report> dp;
@@ -47,6 +53,11 @@ public class ReportsOverviewLayout extends ReportsOverview {
 
 			@Override
 			public void selectionChange(SingleSelectionEvent<String> event) {
+				saveVersionToCookie(event.getValue());
+				if (reportsGrid.getColumn(COLUMN_VERSION) != null && (versionSelector.getValue() != null))
+					reportsGrid.getColumn(COLUMN_VERSION).setHidden(!versionSelector.getValue().equals(ALL_VERSIONS));
+
+				updateDistributionBar();
 				updateData();
 			}
 		});
@@ -63,6 +74,11 @@ public class ReportsOverviewLayout extends ReportsOverview {
 		updateProjects();
 
 		distributionBar.setValues(new int[] { 5, 15, 100 });
+	}
+
+	protected void updateDistributionBar() {
+		distributionBar.setValues(new int[] { (int) Math.round((Math.random() * 100)),
+				(int) Math.round((Math.random() * 100)), (int) Math.round((Math.random() * 100)) });
 	}
 
 	private void initFiltersButtons() {
@@ -115,11 +131,16 @@ public class ReportsOverviewLayout extends ReportsOverview {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
+				if (allKindsBtn.isEnabled() && openBtn.isEnabled()) {
+					customStatusPopup.setPopupVisible(true);
+					return;
+				}
 				allKindsBtn.setEnabled(true);
 				openBtn.setEnabled(true);
 				customBtn.addStyleName("toggled");
-				customStatusPopup.setPopupVisible(true);
 				updateData();
+				customStatusPopup.setPopupVisible(true);
+
 			}
 		});
 
@@ -160,7 +181,30 @@ public class ReportsOverviewLayout extends ReportsOverview {
 		if (versionsList.size() > 1)
 			versionsList.add(0, ALL_VERSIONS);
 		versionSelector.setItems(versionsList);
-		versionSelector.setSelectedItem(versionsList.get(0));
+		String versionToSelect = getVersionFromCookie();
+		if (!versionsList.contains(versionToSelect))
+			versionToSelect = versionsList.get(0);
+		versionSelector.setSelectedItem(versionToSelect);
+	}
+
+	private String getVersionFromCookie() {
+		Cookie[] cookies = VaadinService.getCurrentRequest().getCookies();
+		for (Cookie cookie : cookies) {
+			if (COOKIE_VERSION.equals(cookie.getName())) {
+				return cookie.getValue();
+			}
+		}
+		return "";
+	}
+
+	private void saveVersionToCookie(String value) {
+		final Cookie versionCookie = new Cookie(COOKIE_VERSION, value);
+		versionCookie.setPath(VaadinService.getCurrentRequest().getContextPath());
+
+		VaadinService.getCurrentResponse().addCookie(versionCookie);
+
+		// Page.getCurrent().getJavaScript().execute(String.format("document.cookie
+		// = '%s=%s;';", COOKIE_VERSION, value));
 	}
 
 	private void addVersion(Report a, String projectName, Set<String> versions) {
@@ -169,12 +213,6 @@ public class ReportsOverviewLayout extends ReportsOverview {
 	}
 
 	private void updateData() {
-		if (reportsGrid.getColumn("version") != null && (versionSelector.getValue() != null))
-			reportsGrid.getColumn("version").setHidden(!versionSelector.getValue().equals(ALL_VERSIONS));
-
-		distributionBar.setValues(new int[] { (int) Math.round((Math.random() * 100)),
-				(int) Math.round((Math.random() * 100)), (int) Math.round((Math.random() * 100)) });
-
 		dp.setFilter(getFilter());
 	}
 
