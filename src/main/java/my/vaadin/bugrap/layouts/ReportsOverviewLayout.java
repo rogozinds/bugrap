@@ -8,7 +8,10 @@ import java.util.Set;
 
 import javax.servlet.http.Cookie;
 
+import com.vaadin.data.provider.GridSortOrderBuilder;
 import com.vaadin.data.provider.ListDataProvider;
+import com.vaadin.event.ShortcutAction;
+import com.vaadin.event.ShortcutListener;
 import com.vaadin.event.selection.SelectionEvent;
 import com.vaadin.event.selection.SelectionListener;
 import com.vaadin.event.selection.SingleSelectionEvent;
@@ -18,24 +21,26 @@ import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Grid.Column;
+import com.vaadin.ui.Grid.ItemClick;
+import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.PopupView;
-import com.vaadin.ui.Window;
+import com.vaadin.ui.components.grid.ItemClickListener;
 
 import my.vaadin.bugrap.Report;
 import my.vaadin.bugrap.Report.Status;
-import my.vaadin.bugrap.ReportProvider;
 import my.vaadin.bugrap.ReportsOverview;
+import my.vaadin.bugrap.ReportsProviderService;
 import my.vaadin.bugrap.utils.RelativeDateRenderer;
 
 public class ReportsOverviewLayout extends ReportsOverview {
 
 	private static final String COOKIE_VERSION = "bugrap-version";
-	private static final String COLUMN_VERSION = "version";
 	private static final String ALL_VERSIONS = "All versions";
 
-	private ListDataProvider<Report> dp;
+	private static final String COLUMN_VERSION = "version";
+	private static final String COLUMN_PRIORITY = "priority";
 
-	private Window customWnd = new Window();
+	private ListDataProvider<Report> dp;
 
 	private CustomStatusPopupContent content;
 
@@ -47,8 +52,8 @@ public class ReportsOverviewLayout extends ReportsOverview {
 
 	private void init() {
 		mainSplitter.setMinSplitPosition(25, Unit.PERCENTAGE);
-		showReportDetails(false);
-		accountBtn.setCaption(ReportProvider.USER_NAME);
+
+		accountBtn.setCaption(ReportsProviderService.USER_NAME);
 		initFiltersButtons();
 		initReportsTable();
 		versionSelector.addSelectionListener(new SingleSelectionListener<String>() {
@@ -56,8 +61,11 @@ public class ReportsOverviewLayout extends ReportsOverview {
 			@Override
 			public void selectionChange(SingleSelectionEvent<String> event) {
 				saveVersionToCookie(event.getValue());
-				if (reportsGrid.getColumn(COLUMN_VERSION) != null && (versionSelector.getValue() != null))
-					reportsGrid.getColumn(COLUMN_VERSION).setHidden(!versionSelector.getValue().equals(ALL_VERSIONS));
+				if (reportsGrid.getColumn(COLUMN_VERSION) != null && (versionSelector.getValue() != null)) {
+					boolean allVersionsSelected = versionSelector.getValue().equals(ALL_VERSIONS);
+					reportsGrid.getColumn(COLUMN_VERSION).setHidden(!allVersionsSelected);
+					setSortOrder(allVersionsSelected);
+				}
 
 				updateDistributionBar();
 				updateData();
@@ -73,26 +81,58 @@ public class ReportsOverviewLayout extends ReportsOverview {
 
 		});
 
-		updateProjects();
-
-		distributionBar.setValues(new int[] { 5, 15, 100 });
+		initProjects();
 	}
 
-	protected void updateDistributionBar() {
+	private void setSortOrder(boolean sortByVersion) {
+		GridSortOrderBuilder<Report> builder = new GridSortOrderBuilder<>();
+
+		if (sortByVersion)
+			builder.thenAsc(reportsGrid.getColumn(COLUMN_VERSION));
+		builder.thenDesc(reportsGrid.getColumn(COLUMN_PRIORITY));
+
+		reportsGrid.setSortOrder(builder);
+	}
+
+	private void updateDistributionBar() {
+		// TODO:
 		distributionBar.setValues(new int[] { (int) Math.round((Math.random() * 100)),
 				(int) Math.round((Math.random() * 100)), (int) Math.round((Math.random() * 100)) });
 	}
 
-	private void showReportDetails(boolean value) {
-		if (value) {
-			mainSplitter.setLocked(false);
-			if (mainSplitter.getSplitPosition() > 90)
-				mainSplitter.setSplitPosition(50, Unit.PERCENTAGE);
-		} else {
+	private void showReportDetails(Set<Report> allSelectedItems) {
+		if (allSelectedItems == null || allSelectedItems.size() == 0) {
 			mainSplitter.setLocked(true);
 			mainSplitter.setSplitPosition(100, Unit.PERCENTAGE);
+			mainSplitter.removeComponent(mainSplitter.getSecondComponent());
+			return;
 		}
+		if (allSelectedItems.size() == 1) {
+			ReportDetailsLayout reportDetails = new ReportDetailsLayout();
+			if (mainSplitter.getSecondComponent() instanceof ReportDetailsLayout)
+				reportDetails = (ReportDetailsLayout) mainSplitter.getSecondComponent();
+			else {
+				reportDetails = new ReportDetailsLayout();
+				mainSplitter.setSecondComponent(reportDetails);
+			}
 
+			reportDetails.setReports(allSelectedItems);
+			mainSplitter.setLocked(false);
+			mainSplitter.setSplitPosition(50, Unit.PERCENTAGE);
+
+		} else {
+			ReportPropertiesLayout reportProperties;
+			if (mainSplitter.getSecondComponent() instanceof ReportPropertiesLayout)
+				reportProperties = (ReportPropertiesLayout) mainSplitter.getSecondComponent();
+			else {
+				reportProperties = new ReportPropertiesLayout();
+				mainSplitter.setSecondComponent(reportProperties);
+			}
+			reportProperties.setReports(allSelectedItems);
+
+			mainSplitter.setLocked(true);
+			mainSplitter.setSplitPosition(reportProperties.getHeight(), reportProperties.getHeightUnits(), true);
+		}
 	}
 
 	private void initFiltersButtons() {
@@ -162,33 +202,69 @@ public class ReportsOverviewLayout extends ReportsOverview {
 
 	@SuppressWarnings({ "unchecked", "serial" })
 	private void initReportsTable() {
+		// reportsGrid.getSelectionModel().
+		reportsGrid.setSelectionMode(SelectionMode.MULTI);
+		reportsGrid.getSelectionModel().setUserSelectionAllowed(false);
+		reportsGrid.addShortcutListener(new ShortcutListener("enterPress", ShortcutAction.KeyCode.ENTER, null) {
+
+			@Override
+			public void handleAction(Object sender, Object target) {
+				if (!reportsGrid.getSelectedItems().isEmpty())
+					openReport(reportsGrid.getSelectedItems().iterator().next());
+			}
+		});
+		reportsGrid.addItemClickListener(new ItemClickListener<Report>() {
+
+			@Override
+			public void itemClick(ItemClick<Report> event) {
+				if (event.getMouseEventDetails().isDoubleClick()) {
+					reportsGrid.deselectAll();
+					openReport(event.getItem());
+					return;
+				}
+
+				if (!reportsGrid.getSelectionModel().isSelected(event.getItem())) {
+					if (!event.getMouseEventDetails().isCtrlKey())
+						reportsGrid.deselectAll();
+					reportsGrid.select(event.getItem());
+				} else {
+					if (!event.getMouseEventDetails().isCtrlKey())
+						reportsGrid.deselectAll();
+					else
+						reportsGrid.deselect(event.getItem());
+				}
+			}
+		});
 		reportsGrid.addSelectionListener(new SelectionListener<Report>() {
 
 			@Override
 			public void selectionChange(SelectionEvent<Report> event) {
-				if (event.getAllSelectedItems().size() == 0)
-					showReportDetails(false);
-
-				if (event.getAllSelectedItems().size() == 1)
-					showReportDetails(true);
-
-				reportDetails.setReports(event.getAllSelectedItems());
+				showReportDetails(event.getAllSelectedItems());
 			}
 		});
 
-		dp = new ListDataProvider<>(ReportProvider.getAllReports());
+		dp = new ListDataProvider<>(ReportsProviderService.getAllReports());
 		reportsGrid.setDataProvider(dp);
+
+		setSortOrder(false);
 
 		((Column<Report, Date>) reportsGrid.getColumn("reported")).setRenderer(new RelativeDateRenderer());
 		((Column<Report, Date>) reportsGrid.getColumn("lastModified")).setRenderer(new RelativeDateRenderer());
 	}
 
-	private void updateProjects() {
+	protected void openReport(Report item) {
+		System.out.println("ReportsOverviewLayout.openReport()");
+	}
+
+	private void initProjects() {
 		projectSelector.clear();
-		Set<String> projectNames = new LinkedHashSet<>();
-		dp.getItems().stream().forEach(a -> projectNames.add(a.getProject()));
+		List<String> projectNames = ReportsProviderService.getProjectNames();
+		if (projectNames == null || projectNames.isEmpty()) {
+			projectCountLbl.setValue("0");
+			return;
+		}
 		projectSelector.setItems(projectNames);
-		projectSelector.setSelectedItem(projectNames.iterator().next());
+		projectSelector.setSelectedItem(projectNames.get(0));
 		projectCountLbl.setValue("" + projectNames.size());
 	}
 

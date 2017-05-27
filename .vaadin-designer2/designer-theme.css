@@ -12596,3 +12596,8 @@ div.v-layout.v-horizontal.v-widget {
 	background-image: linear-gradient(0deg,#CBCBCB, #EBEBEB);
 	padding: 5px;
 }
+
+.mytheme .v-grid-cell.frozen {
+	visibility: hidden;
+	width: 0px;
+}

@@ -130,4 +130,10 @@
 	padding: 5px;
 	}
 
+ .v-grid-cell.frozen {
+	visibility: hidden;
+	width: 0px;
+}
+
+
 }

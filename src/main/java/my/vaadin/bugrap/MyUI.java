@@ -27,9 +27,9 @@ public class MyUI extends UI {
 	protected void init(VaadinRequest vaadinRequest) {
 		final VerticalLayout mainContainer = new VerticalLayout();
 
-		mainContainer.addComponent(new ReportsOverviewLayout());
+	//	mainContainer.addComponent(new ReportsOverviewLayout());
 		mainContainer.setSizeFull();
-		setContent(mainContainer);
+		setContent(new ReportsOverviewLayout());
 	}
 
 	@WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
