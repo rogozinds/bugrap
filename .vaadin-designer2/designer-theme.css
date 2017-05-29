@@ -12542,6 +12542,23 @@ div.v-layout.v-horizontal.v-widget {
 	border-radius: 0;
 	background: none;
 	height: 25px;
+	box-shadow: none;
+}
+
+.mytheme .bugrap-selector .v-select-select {
+	box-shadow: none;
+	background: none;
+	border: none;
+}
+
+.mytheme .bugrap-selector .v-select-select:focus {
+	box-shadow: none;
+	background: none;
+	border: none;
+}
+
+.mytheme .bugrap-selector-bold .v-select-select {
+	font-weight: bold;
 }
 
 .mytheme .bugrap-border-right {
@@ -12553,7 +12570,7 @@ div.v-layout.v-horizontal.v-widget {
 	border: none;
 	color: white;
 	border-radius: 10px;
-	font-style: bold;
+	font-weight: bold;
 	text-align: center;
 }
 
@@ -12587,7 +12604,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .mytheme .bugrap-report-name {
-	font-style: bold;
+	font-weight: bold;
 }
 
 .mytheme .bugrap-properties-style {
@@ -12612,4 +12629,44 @@ div.v-layout.v-horizontal.v-widget {
 
 .mytheme .bugrap-comment-user {
 	color: #919191;
+}
+
+.mytheme .bugrap-searchfield {
+	padding: 5px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #919191;
+	border-radius: 15px;
+	background: white;
+}
+
+.mytheme .bugrap-searchfield-field {
+	border: none;
+	font-style: italic;
+	background-color: transparent;
+	box-shadow: none;
+}
+
+.mytheme .bugrap-searchfield-field:focus {
+	outline: 0 !important;
+	border: none;
+	box-shadow: none;
+}
+
+.mytheme .bugrap-searchfield-icon {
+	border: none;
+	border-radius: 0;
+	background: none;
+	box-shadow: none;
+}
+
+.mytheme .bugrap-searchfield-icon:focus {
+	outline: 0 !important;
+	border: none;
+	box-shadow: none;
+}
+
+.mytheme .bugrap-searchfield-btn-margin {
+	margin: 5px;
+	padding: 5px;
 }

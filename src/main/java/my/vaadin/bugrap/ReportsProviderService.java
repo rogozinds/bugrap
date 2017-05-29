@@ -19,8 +19,10 @@ public class ReportsProviderService {
 	private static final String USER_NAME_HANK = "Hank Backwoodling";
 
 	private final static String PROJECT = "Project ";
+	private final static String PROJECT_LONG = "Project name that is rather long pellentesque habitant morbi";
 	private final static String VERSION = "ver. ";
 	private final static String SUMMARY = "Summary #";
+	private final static String SUMMARY2 = "Rather long summary pellentesque habitant morbi #";
 
 	private static List<Report> allReports;
 	private static List<String> allUsers;
@@ -32,10 +34,13 @@ public class ReportsProviderService {
 
 		allReports = new ArrayList<>();
 		for (int i = 0; i < 40; i++) {
+			allReports.add(new Report(PROJECT_LONG, VERSION + "1.0." + (i % 9), (i % 5 + 1), IssueType.FEATURE,
+					SUMMARY + i, null, null, new Date(), Status.OPEN));
+
 			allReports.add(new Report(PROJECT + (i % 3 + 1), VERSION + (i % 5 + 1), (i % 4 + 1), IssueType.BUG,
 					SUMMARY + i, USER_NAME, null, new Date(116, i % 12, i % 28, i % 24, i % 60, i % 10), Status.FIXED));
 			allReports.add(new Report(PROJECT + (i % 7 + 1), VERSION + (i % 6 + 1), (i % 5 + 1), IssueType.BUG,
-					SUMMARY + i, USER_NAME_2, null, new Date(), Status.OPEN));
+					SUMMARY + i, USER_NAME_2, null, new Date(), Status.WONTFIX));
 		}
 
 		return allReports;

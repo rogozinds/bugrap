@@ -8,7 +8,6 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.Panel;
-import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.VerticalSplitPanel;
 import com.vaadin.ui.declarative.Design;
@@ -38,7 +37,6 @@ public class ReportsOverview extends VerticalLayout {
 	protected Button requestFeature;
 	protected Button manageProjectsBtn;
 	protected Label projectCountLbl;
-	protected TextField searchField;
 	protected HorizontalLayout versionsContainer;
 	protected NativeSelect<java.lang.String> versionSelector;
 	protected DistributionBar distributionBar;
