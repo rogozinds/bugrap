@@ -30,7 +30,7 @@ import my.vaadin.bugrap.Report.Status;
 import my.vaadin.bugrap.ReportsOverview;
 import my.vaadin.bugrap.ReportsProviderService;
 import my.vaadin.bugrap.events.UpdateReportDetailsEvent;
-import my.vaadin.bugrap.utils.RelativeDateRenderer;
+import my.vaadin.bugrap.utils.RelativeDateUtils;
 
 public class ReportsOverviewLayout extends ReportsOverview {
 
@@ -320,8 +320,10 @@ public class ReportsOverviewLayout extends ReportsOverview {
 
 		setSortOrder(false);
 
-		((Column<Report, Date>) reportsGrid.getColumn("reported")).setRenderer(new RelativeDateRenderer());
-		((Column<Report, Date>) reportsGrid.getColumn("lastModified")).setRenderer(new RelativeDateRenderer());
+		((Column<Report, Date>) reportsGrid.getColumn("reported"))
+				.setRenderer(RelativeDateUtils.getRelativeDateRenderer());
+		((Column<Report, Date>) reportsGrid.getColumn("lastModified"))
+				.setRenderer(RelativeDateUtils.getRelativeDateRenderer());
 	}
 
 	protected void openReport(Report item) {

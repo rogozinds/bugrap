@@ -7,26 +7,30 @@ import com.vaadin.ui.renderers.DateRenderer;
 
 import elemental.json.JsonValue;
 
-public class RelativeDateRenderer extends DateRenderer {
+public class RelativeDateUtils {
 
-	@Override
-	public JsonValue encode(Date value) {
-		return encode(getRelativeTime(value), String.class);
+	public static DateRenderer getRelativeDateRenderer() {
+		return new DateRenderer() {
+			@Override
+			public JsonValue encode(Date value) {
+				return encode(getRelativeTime(value), String.class);
+			}
+		};
 	}
 
-	private String getRelativeTime(Date value) {
+	public static String getRelativeTime(Date value) {
 		if (value == null)
-			return getNullRepresentation();
+			return "";
 
 		String result;
 		Date now = new Date();
 
 		long diff = 0;
 		diff = TimeUnit.MILLISECONDS.toDays(now.getTime() - value.getTime());
-		result = getRelativeTime(diff/365, "year");
+		result = getRelativeTime(diff / 365, "year");
 		if (result != null)
 			return result;
-		result = getRelativeTime(diff/30, "month");
+		result = getRelativeTime(diff / 30, "month");
 		if (result != null)
 			return result;
 		result = getRelativeTime(diff, "day");
@@ -46,7 +50,7 @@ public class RelativeDateRenderer extends DateRenderer {
 		return "just now";
 	}
 
-	private String getRelativeTime(long diff, String word) {
+	private static String getRelativeTime(long diff, String word) {
 		if (diff <= 0)
 			return null;
 

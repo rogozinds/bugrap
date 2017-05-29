@@ -12600,3 +12600,16 @@ div.v-layout.v-horizontal.v-widget {
 .mytheme .v-grid-cell.frozen {
 	display: none;
 }
+
+.mytheme .bugrap-comment-section {
+	padding-left: 10px;
+}
+
+.mytheme .bugrap-comment-message {
+	color: black;
+	white-space: pre;
+}
+
+.mytheme .bugrap-comment-user {
+	color: #919191;
+}

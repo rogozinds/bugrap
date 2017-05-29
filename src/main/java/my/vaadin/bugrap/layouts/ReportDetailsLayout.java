@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.vaadin.shared.Registration;
+import com.vaadin.ui.VerticalLayout;
 
 import my.vaadin.bugrap.Comment;
 import my.vaadin.bugrap.Report;
@@ -34,8 +35,12 @@ public class ReportDetailsLayout extends ReportDetails {
 	}
 
 	private void setComments(Report report) {
-		List<Comment> comments = ReportsProviderService.getReportComments(report);
-		// TODO:
+		List<Comment> comments = ReportsProviderService.getComments(report);
+		VerticalLayout commentsContainer = new VerticalLayout();
+		commentsSection.setContent(commentsContainer);
+		for (Comment comment : comments) {
+			commentsContainer.addComponent(new CommentDesignLayout(comment));
+		}
 	}
 
 	public void clear() {
