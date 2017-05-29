@@ -61,6 +61,8 @@ public class ReportsOverviewLayout extends ReportsOverview {
 
 			@Override
 			public void selectionChange(SingleSelectionEvent<String> event) {
+				if (event.getValue() == null)
+					return;
 				saveVersionToCookie(event.getValue());
 				if (reportsGrid.getColumn(COLUMN_VERSION) != null && (versionSelector.getValue() != null)) {
 					boolean allVersionsSelected = versionSelector.getValue().equals(ALL_VERSIONS);
@@ -96,9 +98,33 @@ public class ReportsOverviewLayout extends ReportsOverview {
 	}
 
 	private void updateDistributionBar() {
-		// TODO:
-		distributionBar.setValues(new int[] { (int) Math.round((Math.random() * 100)),
-				(int) Math.round((Math.random() * 100)), (int) Math.round((Math.random() * 100)) });
+		int[] a = new int[3];
+		a[0] = 0;
+		a[1] = 0;
+		a[2] = 0;
+		ReportsProviderService.getAllReports().stream().forEach(r -> countMethod(r, a));
+		distributionBar.setValues(a);
+		// distributionBar.setValues(new int[] { (int) Math.round((Math.random()
+		// * 100)),
+		// (int) Math.round((Math.random() * 100)), (int)
+		// Math.round((Math.random() * 100)) });
+	}
+
+	private void countMethod(Report r, int[] a) {
+		if (!testProject(r) || !testVersion(r))
+			return;
+
+		Status s = r.getStatus();
+		if (s == Status.FIXED) {
+			a[0]++;
+			return;
+		}
+
+		if (r.getAssignedTo() != null && !r.getAssignedTo().equals(""))
+			a[1]++;
+		else
+			a[2]++;
+
 	}
 
 	private void showReportDetails(Set<Report> allSelectedItems) {
@@ -387,7 +413,6 @@ public class ReportsOverviewLayout extends ReportsOverview {
 			public boolean test(Report t) {
 				return testProject(t) && testVersion(t) && testUser(t) && testStatus(t);
 			}
-
 		};
 	}
 
