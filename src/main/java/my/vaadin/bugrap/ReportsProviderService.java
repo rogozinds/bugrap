@@ -2,7 +2,7 @@ package my.vaadin.bugrap;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -35,7 +35,7 @@ public class ReportsProviderService {
 	}
 
 	public synchronized static List<String> getProjectNames() {
-		Set<String> projectNames = new HashSet<>();
+		Set<String> projectNames = new LinkedHashSet<>();
 		getAllReports().stream().forEach(a -> projectNames.add(a.getProject()));
 		return new ArrayList<String>(projectNames);
 	}

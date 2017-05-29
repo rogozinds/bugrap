@@ -12598,6 +12598,5 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .mytheme .v-grid-cell.frozen {
-	visibility: hidden;
-	width: 0px;
+	display: none;
 }
