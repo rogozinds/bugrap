@@ -32,7 +32,7 @@ public class Report {
 
 	public enum Status {
 		OPEN("Open"), FIXED("Fixed"), INVALID("Invalid"), WONTFIX("Won't fix"), CANTFIX("Can't fix"), DUPLICATE(
-				"Duplicate"), WORKSFORME("Workd for me"), NEEDSMOREINFORMATION("Needs more informartion");
+				"Duplicate"), WORKSFORME("Works for me"), NEEDSMOREINFORMATION("Needs more informartion");
 
 		private String name;
 
@@ -52,7 +52,7 @@ public class Report {
 
 	private String project;
 	private String version;
-	private int priority = 1;
+	private Integer priority;
 	private IssueType type;
 	private String summary;
 	private String assignedTo;
@@ -77,6 +77,18 @@ public class Report {
 		this.status = status;
 	}
 
+	public Report(Report report) {
+		this.project = report.project;
+		this.version = report.version;
+		this.priority = report.priority;
+		this.type = report.type;
+		this.summary = report.summary;
+		this.assignedTo = report.assignedTo;
+		this.lastModified = report.lastModified;
+		this.reported = report.reported;
+		this.status = report.status;
+	}
+
 	public String getProject() {
 		return project;
 	}
@@ -93,11 +105,11 @@ public class Report {
 		this.version = version;
 	}
 
-	public int getPriority() {
+	public Integer getPriority() {
 		return priority;
 	}
 
-	public void setPriority(int priority) {
+	public void setPriority(Integer priority) {
 		this.priority = priority;
 	}
 

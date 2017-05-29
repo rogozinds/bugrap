@@ -29,6 +29,7 @@ import my.vaadin.bugrap.Report;
 import my.vaadin.bugrap.Report.Status;
 import my.vaadin.bugrap.ReportsOverview;
 import my.vaadin.bugrap.ReportsProviderService;
+import my.vaadin.bugrap.events.UpdateReportDetailsEvent;
 import my.vaadin.bugrap.utils.RelativeDateRenderer;
 
 public class ReportsOverviewLayout extends ReportsOverview {
@@ -40,6 +41,7 @@ public class ReportsOverviewLayout extends ReportsOverview {
 	private static final String COLUMN_PRIORITY = "priority";
 
 	private ListDataProvider<Report> dp;
+	private Listener updateListener;
 
 	private CustomStatusPopupContent content;
 
@@ -112,6 +114,7 @@ public class ReportsOverviewLayout extends ReportsOverview {
 				reportDetails = (ReportDetailsLayout) mainSplitter.getSecondComponent();
 			else {
 				reportDetails = new ReportDetailsLayout();
+				reportDetails.addUpdateListener(updateListener);
 				mainSplitter.setSecondComponent(reportDetails);
 			}
 
@@ -125,6 +128,8 @@ public class ReportsOverviewLayout extends ReportsOverview {
 				reportProperties = (ReportPropertiesLayout) mainSplitter.getSecondComponent();
 			else {
 				reportProperties = new ReportPropertiesLayout();
+				reportProperties.addListener(updateListener);
+
 				mainSplitter.setSecondComponent(reportProperties);
 			}
 			reportProperties.setReports(allSelectedItems);
@@ -290,6 +295,18 @@ public class ReportsOverviewLayout extends ReportsOverview {
 				}
 			}
 		});
+
+		updateListener = new Listener() {
+
+			@Override
+			public void componentEvent(Event event) {
+				if (!(event instanceof UpdateReportDetailsEvent))
+					return;
+
+				dp.refreshAll();
+			}
+		};
+
 		reportsGrid.addSelectionListener(new SelectionListener<Report>() {
 
 			@Override
@@ -390,7 +407,7 @@ public class ReportsOverviewLayout extends ReportsOverview {
 		if (versionSelector.getValue().equals(ALL_VERSIONS))
 			return true;
 
-		return t.getVersion().equals(versionSelector.getValue());
+		return t.getVersion() != null && t.getVersion().equals(versionSelector.getValue());
 	}
 
 	private boolean testUser(Report t) {

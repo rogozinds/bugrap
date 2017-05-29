@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import com.vaadin.shared.Registration;
+
 import my.vaadin.bugrap.Comment;
 import my.vaadin.bugrap.Report;
 import my.vaadin.bugrap.ReportDetails;
@@ -14,6 +16,11 @@ public class ReportDetailsLayout extends ReportDetails {
 
 	public ReportDetailsLayout() {
 		super();
+
+	}
+
+	public Registration addUpdateListener(Listener listener) {
+		return reportProperties.addListener(listener);
 	}
 
 	public void setReports(Collection<Report> selectedReports) {
