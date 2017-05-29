@@ -23,12 +23,14 @@ public class ReportPropertiesLayout extends ReportProperties {
 			return;
 		}
 		if (reports.size() == 1) {
+			openInNewWnd.setVisible(true);
 			Report report = reports.iterator().next();
 			reportName.setValue(report.getSummary());
 			setSingleReportProperties(report);
 			return;
 		}
 
+		openInNewWnd.setVisible(false);
 		reportName.setValue(reports.size() + " reports selected");
 
 	}

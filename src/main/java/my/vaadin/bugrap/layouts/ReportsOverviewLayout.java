@@ -2,7 +2,6 @@ package my.vaadin.bugrap.layouts;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -202,9 +201,64 @@ public class ReportsOverviewLayout extends ReportsOverview {
 
 	@SuppressWarnings({ "unchecked", "serial" })
 	private void initReportsTable() {
-		// reportsGrid.getSelectionModel().
 		reportsGrid.setSelectionMode(SelectionMode.MULTI);
 		reportsGrid.getSelectionModel().setUserSelectionAllowed(false);
+		//
+		// gridContainer.addShortcutListener(new ShortcutListener("upPress2",
+		// ShortcutAction.KeyCode.ARROW_UP, null) {
+		// @Override
+		// public void handleAction(Object sender, Object target) {
+		// System.out.println("ReportsOverviewLayout" + target.getClass());
+		// JavaScript.eval("window.$(\".v-grid-cell
+		// .v-grid-cell-focused\").click();");
+		// }
+		// });
+		//
+		// reportsGrid.addShortcutListener(new ShortcutListener("upPress3",
+		// ShortcutAction.KeyCode.ARROW_UP, null) {
+		// @Override
+		// public void handleAction(Object sender, Object target) {
+		// System.out.println("ReportsOverviewLayout" + target.getClass());
+		// JavaScript.eval("window.$(\".v-grid-cell
+		// .v-grid-cell-focused\").click();");
+		// }
+		// });
+		//
+		// addShortcutListener(new ShortcutListener("upPress4",
+		// ShortcutAction.KeyCode.ARROW_UP, null) {
+		// @Override
+		// public void handleAction(Object sender, Object target) {
+		// System.out.println("ReportsOverviewLayout" + target.getClass());
+		// JavaScript.eval("window.$(\".v-grid-cell
+		// .v-grid-cell-focused\").click();");
+		// }
+		// });
+		//
+		// mainSplitter.addShortcutListener(new ShortcutListener("upPress5",
+		// ShortcutAction.KeyCode.ARROW_UP, null) {
+		// @Override
+		// public void handleAction(Object sender, Object target) {
+		// System.out.println("ReportsOverviewLayout" + target.getClass());
+		// JavaScript.eval("window.$(\".v-grid-cell
+		// .v-grid-cell-focused\").click();");
+		// }
+		// });
+		//
+		// reportsGrid.addShortcutListener(new ShortcutListener("downPress",
+		// ShortcutAction.KeyCode.ARROW_DOWN, null) {
+		//
+		// @Override
+		// public void handleAction(Object sender, Object target) {
+		// System.out.println(
+		// "ReportsOverviewLayout" + target.getClass());
+		// JavaScript
+		// .eval("if(!window.(\".v-grid-body .v-grid-row-focused
+		// .v-grid-row-selected\").length){window.(\".v-grid-body
+		// .v-grid-cell-focused\").click();}"
+		// + "");
+		// }
+		// });
+
 		reportsGrid.addShortcutListener(new ShortcutListener("enterPress", ShortcutAction.KeyCode.ENTER, null) {
 
 			@Override
@@ -213,6 +267,7 @@ public class ReportsOverviewLayout extends ReportsOverview {
 					openReport(reportsGrid.getSelectedItems().iterator().next());
 			}
 		});
+
 		reportsGrid.addItemClickListener(new ItemClickListener<Report>() {
 
 			@Override
@@ -253,7 +308,7 @@ public class ReportsOverviewLayout extends ReportsOverview {
 	}
 
 	protected void openReport(Report item) {
-		System.out.println("ReportsOverviewLayout.openReport()");
+		System.out.println("ReportsOverviewLayout.openReport() " + item.getSummary());
 	}
 
 	private void initProjects() {
@@ -270,10 +325,8 @@ public class ReportsOverviewLayout extends ReportsOverview {
 
 	private void updateVersions() {
 		versionSelector.clear();
-		String projectName = projectSelector.getValue();
-		Set<String> versions = new LinkedHashSet<>();
-		dp.getItems().stream().forEach(a -> addVersion(a, projectName, versions));
-		List<String> versionsList = new ArrayList<>(versions);
+		List<String> versionsList = new ArrayList<>(
+				ReportsProviderService.getProjectVersions(projectSelector.getValue()));
 		if (versionsList.size() > 1)
 			versionsList.add(0, ALL_VERSIONS);
 		versionSelector.setItems(versionsList);
@@ -301,11 +354,6 @@ public class ReportsOverviewLayout extends ReportsOverview {
 
 		// Page.getCurrent().getJavaScript().execute(String.format("document.cookie
 		// = '%s=%s;';", COOKIE_VERSION, value));
-	}
-
-	private void addVersion(Report a, String projectName, Set<String> versions) {
-		if (a.getProject().equals(projectName))
-			versions.add(a.getVersion());
 	}
 
 	private void updateData() {

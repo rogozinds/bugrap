@@ -40,6 +40,17 @@ public class ReportsProviderService {
 		return new ArrayList<String>(projectNames);
 	}
 
+	private static void addVersion(Report a, String projectName, Set<String> versions) {
+		if (a.getProject().equals(projectName))
+			versions.add(a.getVersion());
+	}
+
+	public synchronized static List<String> getProjectVersions(String projectName) {
+		Set<String> versions = new LinkedHashSet<>();
+		getAllReports().stream().forEach(a -> addVersion(a, projectName, versions));
+		return new ArrayList<>(versions);
+	}
+
 	public static List<Comment> getReportComments(Report report) {
 		// TODO Auto-generated method stub
 		return null;
