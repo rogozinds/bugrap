@@ -1,12 +1,12 @@
 package my.vaadin.bugrap.layouts;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
 import javax.servlet.http.Cookie;
 
+import com.vaadin.data.ValueProvider;
 import com.vaadin.data.provider.GridSortOrderBuilder;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.event.ShortcutAction;
@@ -19,11 +19,11 @@ import com.vaadin.server.SerializablePredicate;
 import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.Grid.ItemClick;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.PopupView;
 import com.vaadin.ui.components.grid.ItemClickListener;
+import com.vaadin.ui.renderers.HtmlRenderer;
 
 import my.vaadin.bugrap.Report;
 import my.vaadin.bugrap.Report.Status;
@@ -39,6 +39,20 @@ public class ReportsOverviewLayout extends ReportsOverview {
 
 	private static final String COLUMN_VERSION = "version";
 	private static final String COLUMN_PRIORITY = "priority";
+
+	private enum ReportColumn {
+		VERSION("version", "VERSION"), PRIORITY("priority", "PRIORITY"), TYPE("type", "TYPE"), SUMMARY("summary",
+				"SUMMARY"), ASSIGNEDTO("assignedTo",
+						"ASSIGNED TO"), LASTMODIFIED("lastModified", "LAST MODIFIED"), REPORTED("reported", "REPORTED");
+
+		private String id;
+		private String caption;
+
+		private ReportColumn(String id, String caption) {
+			this.id = id;
+			this.caption = caption;
+		}
+	}
 
 	private ListDataProvider<Report> dp;
 	private Listener updateListener;
@@ -232,6 +246,8 @@ public class ReportsOverviewLayout extends ReportsOverview {
 
 	@SuppressWarnings({ "unchecked", "serial" })
 	private void initReportsTable() {
+		setupColumns();
+
 		reportsGrid.setSelectionMode(SelectionMode.MULTI);
 		reportsGrid.getSelectionModel().setUserSelectionAllowed(false);
 		//
@@ -345,11 +361,47 @@ public class ReportsOverviewLayout extends ReportsOverview {
 		reportsGrid.setDataProvider(dp);
 
 		setSortOrder(false);
+	}
 
-		((Column<Report, Date>) reportsGrid.getColumn("reported"))
-				.setRenderer(RelativeDateUtils.getRelativeDateRenderer());
-		((Column<Report, Date>) reportsGrid.getColumn("lastModified"))
-				.setRenderer(RelativeDateUtils.getRelativeDateRenderer());
+	private void setupColumns() {
+		reportsGrid.addColumn(Report::getVersion).setCaption(ReportColumn.VERSION.caption)
+				.setId(ReportColumn.VERSION.id).setWidth(200);
+
+		reportsGrid.addColumn(getPriorityHtmlValueProvider(), new HtmlRenderer())
+				.setCaption(ReportColumn.PRIORITY.caption).setId(ReportColumn.PRIORITY.id).setWidth(110);
+
+		reportsGrid.addColumn(Report::getType).setCaption(ReportColumn.TYPE.caption).setId(ReportColumn.TYPE.id)
+				.setWidth(100);
+
+		reportsGrid.addColumn(Report::getSummary).setCaption(ReportColumn.SUMMARY.caption)
+				.setId(ReportColumn.SUMMARY.id);
+
+		reportsGrid.addColumn(Report::getAssignedTo).setCaption(ReportColumn.ASSIGNEDTO.caption)
+				.setId(ReportColumn.ASSIGNEDTO.id).setWidth(200);
+
+		reportsGrid.addColumn(Report::getLastModified, RelativeDateUtils.getRelativeDateRenderer())
+				.setCaption(ReportColumn.LASTMODIFIED.caption).setId(ReportColumn.LASTMODIFIED.id).setWidth(150);
+
+		reportsGrid.addColumn(Report::getReported, RelativeDateUtils.getRelativeDateRenderer())
+				.setCaption(ReportColumn.REPORTED.caption).setId(ReportColumn.REPORTED.id).setWidth(150);
+
+	}
+
+	private ValueProvider<Report, String> getPriorityHtmlValueProvider() {
+		return new ValueProvider<Report, String>() {
+
+			@Override
+			public String apply(Report source) {
+				String singleP = "<span class=\"v-align-right v-align-middle bugrap-priority\" style=\" width: 15%; height: 100%; \" >&nbsp;&nbsp;</span>";
+				StringBuilder sb = new StringBuilder();
+				sb.append(
+						"<div class=\"v-horizontallayout v-layout v-horizontal v-widget v-has-width v-has-height v-align-middle\" style=\" width: 100%; height: 90%\">");
+				for (int i = 0; i < source.getPriority(); i++)
+					sb.append(singleP);
+				sb.append("</div>");
+				return sb.toString();
+			}
+		};
 	}
 
 	protected void openReport(Report item) {
