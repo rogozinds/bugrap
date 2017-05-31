@@ -8,7 +8,9 @@
  <body>
   <vaadin-vertical-layout style-name="bugrap-properties-style" height="115px" margin="false">
    <vaadin-horizontal-layout width-full height="26px">
-    <vaadin-button icon="fonticon://Vaadin-Icons/e7de" style-name="bugrap-btn" plain-text _id="openInNewWnd"></vaadin-button>
+    <vaadin-panel style-name="bugrap-transparent" size-auto _id="openBtnContainer">
+     <vaadin-button icon="fonticon://Vaadin-Icons/e7de" style-name="bugrap-btn" plain-text _id="openInNewWnd"></vaadin-button>
+    </vaadin-panel>
     <vaadin-label style-name="bugrap-report-name" width-full plain-text _id="reportName" :middle :expand>
       Label 
     </vaadin-label>

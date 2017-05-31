@@ -50,6 +50,8 @@ public class Report {
 		}
 	}
 
+	private static int ID_SOURCE = 0;
+
 	private String project;
 	private String version;
 	private Integer priority;
@@ -59,6 +61,7 @@ public class Report {
 	private Date lastModified;
 	private Date reported;
 	private Status status;
+	private final int id = ID_SOURCE++;
 
 	public Report() {
 
@@ -159,5 +162,9 @@ public class Report {
 
 	public void setStatus(Status status) {
 		this.status = status;
+	}
+
+	public int getId() {
+		return id;
 	}
 }

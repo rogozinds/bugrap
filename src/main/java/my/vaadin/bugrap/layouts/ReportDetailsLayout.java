@@ -16,8 +16,6 @@ import my.vaadin.bugrap.ReportsProviderService;
 public class ReportDetailsLayout extends ReportDetails {
 
 	public ReportDetailsLayout() {
-		super();
-
 	}
 
 	public Registration addUpdateListener(Listener listener) {
@@ -45,6 +43,9 @@ public class ReportDetailsLayout extends ReportDetails {
 
 	public void clear() {
 		reportProperties.clear();
-
+	}
+	
+	public void showOpenInNewWindowBtn(boolean value){
+		reportProperties.showOpenInNewWindowBtn(value);
 	}
 }

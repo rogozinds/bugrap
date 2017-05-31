@@ -46,7 +46,15 @@ public class ReportsProviderService {
 		return allReports;
 	}
 
-	public synchronized static List<String> getProjectNames() {
+	public static Report getReportById(final int id) {
+		try {
+			return getAllReports().stream().filter(a -> (a.getId() == id)).findFirst().get();
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	public static List<String> getProjectNames() {
 		Set<String> projectNames = new LinkedHashSet<>();
 		getAllReports().stream().forEach(a -> projectNames.add(a.getProject()));
 		return new ArrayList<String>(projectNames);

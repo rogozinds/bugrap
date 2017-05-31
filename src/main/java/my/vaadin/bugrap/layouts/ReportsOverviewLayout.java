@@ -15,6 +15,7 @@ import com.vaadin.event.selection.SelectionEvent;
 import com.vaadin.event.selection.SelectionListener;
 import com.vaadin.event.selection.SingleSelectionEvent;
 import com.vaadin.event.selection.SingleSelectionListener;
+import com.vaadin.server.Page;
 import com.vaadin.server.SerializablePredicate;
 import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Button.ClickEvent;
@@ -31,6 +32,7 @@ import my.vaadin.bugrap.ReportsOverview;
 import my.vaadin.bugrap.ReportsProviderService;
 import my.vaadin.bugrap.events.UpdateReportDetailsEvent;
 import my.vaadin.bugrap.utils.RelativeDateUtils;
+import my.vaadin.bugrap.utils.ReportWindowOpener;
 
 public class ReportsOverviewLayout extends ReportsOverview {
 
@@ -66,8 +68,6 @@ public class ReportsOverviewLayout extends ReportsOverview {
 	}
 
 	private void init() {
-		mainSplitter.setMinSplitPosition(25, Unit.PERCENTAGE);
-
 		accountBtn.setCaption(ReportsProviderService.USER_NAME);
 		initFiltersButtons();
 		initReportsTable();
@@ -346,6 +346,7 @@ public class ReportsOverviewLayout extends ReportsOverview {
 					return;
 
 				dp.refreshAll();
+				updateDistributionBar();
 			}
 		};
 
@@ -405,7 +406,7 @@ public class ReportsOverviewLayout extends ReportsOverview {
 	}
 
 	protected void openReport(Report item) {
-		System.out.println("ReportsOverviewLayout.openReport() " + item.getSummary());
+		ReportWindowOpener.openReport(item);
 	}
 
 	private void initProjects() {

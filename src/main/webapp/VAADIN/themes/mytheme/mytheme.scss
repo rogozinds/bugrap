@@ -140,7 +140,7 @@
 
 .bugrap-properties-style{
 	@include linear-gradient(0deg, #CBCBCB, #EBEBEB);
-	padding: 5px;
+	padding: 10px;
 	}
 
  .v-grid-cell.frozen {
@@ -204,4 +204,14 @@
 		background-color: gray;
 		width: 5px;
 	}
+ .bugrap-regular-btn {
+  	border-radius: 10px;		
+  	height: 25px;
+ }
+
+.bugrap-transparent {
+	background: transparent;
+	
+	}
+
 }

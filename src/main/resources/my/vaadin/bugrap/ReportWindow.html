@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+ <head>
+  <meta charset="UTF-8">
+  <meta name="design-properties" content="{&quot;RULERS_VISIBLE&quot;:true,&quot;GUIDELINES_VISIBLE&quot;:false,&quot;SNAP_TO_OBJECTS&quot;:true,&quot;SNAP_TO_GRID&quot;:true,&quot;SNAPPING_DISTANCE&quot;:10,&quot;JAVA_SOURCES_ROOT&quot;:&quot;src/main/java&quot;,&quot;THEME&quot;:&quot;mytheme&quot;}">
+  <meta name="vaadin-version" content="8.0.5">
+  <meta name="package-mapping" content="my_vaadin_bugrap_layouts:my.vaadin.bugrap.layouts">
+ </head>
+ <body>
+  <vaadin-vertical-layout spacing="false" size-full margin="false">
+   <vaadin-horizontal-layout style-name="top-header" spacing="false" width-full height="25px" _id="topHeader" :center></vaadin-horizontal-layout>
+   <vaadin-vertical-layout spacing="false" size-full margin="false" :expand>
+    <vaadin-horizontal-layout style-name="bugrap-padding" width-full height="35px" _id="breadcrumbsContainer" :middle>
+     <vaadin-label plain-text _id="prjLbl"></vaadin-label>
+     <vaadin-label icon="fonticon://Vaadin-Icons/e6ec" plain-text></vaadin-label>
+     <vaadin-label plain-text _id="versionLbl"></vaadin-label>
+     <vaadin-horizontal-layout width-full :expand></vaadin-horizontal-layout>
+    </vaadin-horizontal-layout>
+    <my_vaadin_bugrap_layouts-report-details-layout size-full _id="reportDetails" :expand></my_vaadin_bugrap_layouts-report-details-layout>
+    <vaadin-vertical-layout style-name="bottom-footer bugrap-padding" margin="false">
+     <vaadin-text-area width-full></vaadin-text-area>
+     <vaadin-horizontal-layout width-full></vaadin-horizontal-layout>
+     <vaadin-horizontal-layout responsive :bottom>
+      <vaadin-button style-name="bugrap-regular-btn" plain-text _id="doneBtn">
+        Done 
+      </vaadin-button>
+      <vaadin-button style-name="bugrap-regular-btn" plain-text _id="attachBtn">
+        Attachment... 
+      </vaadin-button>
+      <vaadin-button style-name="bugrap-regular-btn" plain-text _id="cancelBtn">
+        Cancel 
+      </vaadin-button>
+     </vaadin-horizontal-layout>
+    </vaadin-vertical-layout>
+   </vaadin-vertical-layout>
+   <vaadin-horizontal-layout style-name="bottom-footer" spacing="false" width-full height="25px" _id="bottomFooter" :bottom :center></vaadin-horizontal-layout>
+  </vaadin-vertical-layout>
+ </body>
+</html>

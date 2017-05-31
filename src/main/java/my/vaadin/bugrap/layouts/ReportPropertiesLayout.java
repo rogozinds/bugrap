@@ -13,10 +13,11 @@ import my.vaadin.bugrap.Report.Status;
 import my.vaadin.bugrap.ReportProperties;
 import my.vaadin.bugrap.ReportsProviderService;
 import my.vaadin.bugrap.events.UpdateReportDetailsEvent;
+import my.vaadin.bugrap.utils.ReportWindowOpener;
 
 public class ReportPropertiesLayout extends ReportProperties {
 
-	private List<Report> reports = new ArrayList<>();
+	private final List<Report> reports = new ArrayList<>();
 
 	public ReportPropertiesLayout() {
 		super();
@@ -61,6 +62,17 @@ public class ReportPropertiesLayout extends ReportProperties {
 		typeSelector.setItems(IssueType.values());
 		statusSelector.setItems(Status.values());
 		assignedToSelector.setItems(ReportsProviderService.getUsers());
+
+		openInNewWnd.addClickListener(new ClickListener() {
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				if (reports.isEmpty())
+					return;
+
+				ReportWindowOpener.openReport(reports.get(0));
+			}
+		});
 	}
 
 	public void setReports(Collection<Report> reports) {
@@ -81,7 +93,7 @@ public class ReportPropertiesLayout extends ReportProperties {
 			return;
 		}
 
-		openInNewWnd.setVisible(false);
+		showOpenInNewWindowBtn(false);
 		reportName.setValue(reports.size() + " reports selected");
 		setSingleReportProperties(getCommonReport());
 	}
@@ -132,6 +144,10 @@ public class ReportPropertiesLayout extends ReportProperties {
 		statusSelector.setValue(report.getStatus());
 		assignedToSelector.setValue(report.getAssignedTo());
 		versionSelector.setValue(report.getVersion());
+	}
+
+	public void showOpenInNewWindowBtn(boolean value) {
+		openBtnContainer.setVisible(value);
 	}
 
 }

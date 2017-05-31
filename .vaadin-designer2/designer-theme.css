@@ -12611,7 +12611,7 @@ div.v-layout.v-horizontal.v-widget {
 	background-color: #CBCBCB;
 	background-image: -webkit-linear-gradient(-270deg, #CBCBCB, #EBEBEB);
 	background-image: linear-gradient(0deg,#CBCBCB, #EBEBEB);
-	padding: 5px;
+	padding: 10px;
 }
 
 .mytheme .v-grid-cell.frozen {
@@ -12675,4 +12675,13 @@ div.v-layout.v-horizontal.v-widget {
 	margin: 1px;
 	background-color: gray;
 	width: 5px;
+}
+
+.mytheme .bugrap-regular-btn {
+	border-radius: 10px;
+	height: 25px;
+}
+
+.mytheme .bugrap-transparent {
+	background: transparent;
 }

@@ -7,7 +7,6 @@ import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
 
 import my.vaadin.bugrap.layouts.ReportsOverviewLayout;
 
@@ -25,11 +24,12 @@ public class MyUI extends UI {
 
 	@Override
 	protected void init(VaadinRequest vaadinRequest) {
-		final VerticalLayout mainContainer = new VerticalLayout();
-
-	//	mainContainer.addComponent(new ReportsOverviewLayout());
-		mainContainer.setSizeFull();
 		setContent(new ReportsOverviewLayout());
+	}
+
+	@WebServlet(urlPatterns = "/reports/*", name = "ReportUIServlet", asyncSupported = true)
+	@VaadinServletConfiguration(ui = SingleReportUI.class, productionMode = false)
+	public static class ReportUIServlet extends VaadinServlet {
 	}
 
 	@WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
