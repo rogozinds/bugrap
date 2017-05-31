@@ -4,11 +4,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.vaadin.bugrap.domain.entities.Comment;
+import org.vaadin.bugrap.domain.entities.Report;
+
 import com.vaadin.shared.Registration;
 import com.vaadin.ui.VerticalLayout;
 
-import my.vaadin.bugrap.Comment;
-import my.vaadin.bugrap.Report;
 import my.vaadin.bugrap.ReportDetails;
 import my.vaadin.bugrap.ReportsProviderService;
 
@@ -33,7 +34,7 @@ public class ReportDetailsLayout extends ReportDetails {
 	}
 
 	private void setComments(Report report) {
-		List<Comment> comments = ReportsProviderService.getComments(report);
+		List<Comment> comments = ReportsProviderService.get().findComments(report);
 		VerticalLayout commentsContainer = new VerticalLayout();
 		commentsSection.setContent(commentsContainer);
 		for (Comment comment : comments) {
@@ -44,8 +45,8 @@ public class ReportDetailsLayout extends ReportDetails {
 	public void clear() {
 		reportProperties.clear();
 	}
-	
-	public void showOpenInNewWindowBtn(boolean value){
+
+	public void showOpenInNewWindowBtn(boolean value) {
 		reportProperties.showOpenInNewWindowBtn(value);
 	}
 }

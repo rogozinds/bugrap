@@ -1,12 +1,20 @@
 package my.vaadin.bugrap.layouts;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 import javax.servlet.http.Cookie;
 
-import com.vaadin.data.ValueProvider;
+import org.vaadin.bugrap.domain.BugrapRepository;
+import org.vaadin.bugrap.domain.BugrapRepository.ReportsQuery;
+import org.vaadin.bugrap.domain.entities.Project;
+import org.vaadin.bugrap.domain.entities.ProjectVersion;
+import org.vaadin.bugrap.domain.entities.Report;
+import org.vaadin.bugrap.domain.entities.Report.Status;
+import org.vaadin.bugrap.domain.entities.Reporter;
+
 import com.vaadin.data.provider.GridSortOrderBuilder;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.event.ShortcutAction;
@@ -15,8 +23,6 @@ import com.vaadin.event.selection.SelectionEvent;
 import com.vaadin.event.selection.SelectionListener;
 import com.vaadin.event.selection.SingleSelectionEvent;
 import com.vaadin.event.selection.SingleSelectionListener;
-import com.vaadin.server.Page;
-import com.vaadin.server.SerializablePredicate;
 import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
@@ -26,11 +32,10 @@ import com.vaadin.ui.PopupView;
 import com.vaadin.ui.components.grid.ItemClickListener;
 import com.vaadin.ui.renderers.HtmlRenderer;
 
-import my.vaadin.bugrap.Report;
-import my.vaadin.bugrap.Report.Status;
 import my.vaadin.bugrap.ReportsOverview;
 import my.vaadin.bugrap.ReportsProviderService;
 import my.vaadin.bugrap.events.UpdateReportDetailsEvent;
+import my.vaadin.bugrap.utils.PriorityHtmlValueProvider;
 import my.vaadin.bugrap.utils.RelativeDateUtils;
 import my.vaadin.bugrap.utils.ReportWindowOpener;
 
@@ -38,9 +43,6 @@ public class ReportsOverviewLayout extends ReportsOverview {
 
 	private static final String COOKIE_VERSION = "bugrap-version";
 	private static final String ALL_VERSIONS = "All versions";
-
-	private static final String COLUMN_VERSION = "version";
-	private static final String COLUMN_PRIORITY = "priority";
 
 	private enum ReportColumn {
 		VERSION("version", "VERSION"), PRIORITY("priority", "PRIORITY"), TYPE("type", "TYPE"), SUMMARY("summary",
@@ -60,6 +62,8 @@ public class ReportsOverviewLayout extends ReportsOverview {
 	private Listener updateListener;
 
 	private CustomStatusPopupContent content;
+	private Reporter me;
+	private ProjectVersion allVersions;
 
 	public ReportsOverviewLayout() {
 		super();
@@ -67,33 +71,45 @@ public class ReportsOverviewLayout extends ReportsOverview {
 		init();
 	}
 
+	private void initBasicData() {
+		me = dataSource().findReporters().iterator().next();
+		if (me == null) {
+			me = new Reporter();
+			me.setName("undefined");
+		}
+
+		accountBtn.setCaption(me.getName());
+
+		allVersions = new ProjectVersion();
+		allVersions.setVersion(ALL_VERSIONS);
+	}
+
 	private void init() {
-		accountBtn.setCaption(ReportsProviderService.USER_NAME);
+		initBasicData();
+
 		initFiltersButtons();
 		initReportsTable();
-		versionSelector.addSelectionListener(new SingleSelectionListener<String>() {
+		versionSelector.addSelectionListener(new SingleSelectionListener<ProjectVersion>() {
 
 			@Override
-			public void selectionChange(SingleSelectionEvent<String> event) {
+			public void selectionChange(SingleSelectionEvent<ProjectVersion> event) {
 				if (event.getValue() == null)
 					return;
-				saveVersionToCookie(event.getValue());
-				if (reportsGrid.getColumn(COLUMN_VERSION) != null && (versionSelector.getValue() != null)) {
-					boolean allVersionsSelected = versionSelector.getValue().equals(ALL_VERSIONS);
-					reportsGrid.getColumn(COLUMN_VERSION).setHidden(!allVersionsSelected);
-					setSortOrder(allVersionsSelected);
-				}
+				saveVersionToCookie(event.getValue().getVersion());
+				boolean allVersionsSelected = versionSelector.getValue() == allVersions;
+				reportsGrid.getColumn(ReportColumn.VERSION.id).setHidden(!allVersionsSelected);
+				setSortOrder(allVersionsSelected);
 
 				updateDistributionBar();
 				updateData();
 			}
 		});
 
-		projectSelector.addSelectionListener(new SingleSelectionListener<String>() {
+		projectSelector.addSelectionListener(new SingleSelectionListener<Project>() {
 
 			@Override
-			public void selectionChange(SingleSelectionEvent<String> event) {
-				updateVersions();
+			public void selectionChange(SingleSelectionEvent<Project> event) {
+				updateVersions(event.getValue());
 			}
 
 		});
@@ -105,40 +121,29 @@ public class ReportsOverviewLayout extends ReportsOverview {
 		GridSortOrderBuilder<Report> builder = new GridSortOrderBuilder<>();
 
 		if (sortByVersion)
-			builder.thenAsc(reportsGrid.getColumn(COLUMN_VERSION));
-		builder.thenDesc(reportsGrid.getColumn(COLUMN_PRIORITY));
+			builder.thenAsc(reportsGrid.getColumn(ReportColumn.VERSION.id));
+		builder.thenDesc(reportsGrid.getColumn(ReportColumn.PRIORITY.id));
 
 		reportsGrid.setSortOrder(builder);
 	}
 
 	private void updateDistributionBar() {
 		int[] a = new int[3];
-		a[0] = 0;
-		a[1] = 0;
-		a[2] = 0;
-		ReportsProviderService.getAllReports().stream().forEach(r -> countMethod(r, a));
-		distributionBar.setValues(a);
-		// distributionBar.setValues(new int[] { (int) Math.round((Math.random()
-		// * 100)),
-		// (int) Math.round((Math.random() * 100)), (int)
-		// Math.round((Math.random() * 100)) });
-	}
-
-	private void countMethod(Report r, int[] a) {
-		if (!testProject(r) || !testVersion(r))
+		ProjectVersion projectVersion = versionSelector.getValue();
+		if (projectVersion == null)
 			return;
 
-		Status s = r.getStatus();
-		if (s == Status.FIXED) {
-			a[0]++;
-			return;
+		if (projectVersion == allVersions) {
+			Project prj = projectSelector.getValue();
+			a[0] = (int) dataSource().countClosedReports(prj);
+			a[1] = (int) dataSource().countOpenedReports(prj);
+			a[2] = (int) dataSource().countUnassignedReports(prj);
+		} else {
+			a[0] = (int) dataSource().countClosedReports(projectVersion);
+			a[1] = (int) dataSource().countOpenedReports(projectVersion);
+			a[2] = (int) dataSource().countUnassignedReports(projectVersion);
 		}
-
-		if (r.getAssignedTo() != null && !r.getAssignedTo().equals(""))
-			a[1]++;
-		else
-			a[2]++;
-
+		distributionBar.setValues(a);
 	}
 
 	private void showReportDetails(Set<Report> allSelectedItems) {
@@ -345,7 +350,8 @@ public class ReportsOverviewLayout extends ReportsOverview {
 				if (!(event instanceof UpdateReportDetailsEvent))
 					return;
 
-				dp.refreshAll();
+				for (Report item : ((UpdateReportDetailsEvent) event).getReports())
+					dp.refreshItem(item);
 				updateDistributionBar();
 			}
 		};
@@ -358,7 +364,7 @@ public class ReportsOverviewLayout extends ReportsOverview {
 			}
 		});
 
-		dp = new ListDataProvider<>(ReportsProviderService.getAllReports());
+		dp = new ListDataProvider<>(Collections.emptyList());
 		reportsGrid.setDataProvider(dp);
 
 		setSortOrder(false);
@@ -368,41 +374,24 @@ public class ReportsOverviewLayout extends ReportsOverview {
 		reportsGrid.addColumn(Report::getVersion).setCaption(ReportColumn.VERSION.caption)
 				.setId(ReportColumn.VERSION.id).setWidth(200);
 
-		reportsGrid.addColumn(getPriorityHtmlValueProvider(), new HtmlRenderer())
+		reportsGrid.addColumn(PriorityHtmlValueProvider.get(), new HtmlRenderer())
 				.setCaption(ReportColumn.PRIORITY.caption).setId(ReportColumn.PRIORITY.id).setWidth(110);
 
 		reportsGrid.addColumn(Report::getType).setCaption(ReportColumn.TYPE.caption).setId(ReportColumn.TYPE.id)
-				.setWidth(100);
+				.setWidth(120);
 
 		reportsGrid.addColumn(Report::getSummary).setCaption(ReportColumn.SUMMARY.caption)
 				.setId(ReportColumn.SUMMARY.id);
 
-		reportsGrid.addColumn(Report::getAssignedTo).setCaption(ReportColumn.ASSIGNEDTO.caption)
+		reportsGrid.addColumn(Report::getAssigned).setCaption(ReportColumn.ASSIGNEDTO.caption)
 				.setId(ReportColumn.ASSIGNEDTO.id).setWidth(200);
 
-		reportsGrid.addColumn(Report::getLastModified, RelativeDateUtils.getRelativeDateRenderer())
+		reportsGrid.addColumn(Report::getTimestamp, RelativeDateUtils.getRelativeDateRenderer())
 				.setCaption(ReportColumn.LASTMODIFIED.caption).setId(ReportColumn.LASTMODIFIED.id).setWidth(150);
 
-		reportsGrid.addColumn(Report::getReported, RelativeDateUtils.getRelativeDateRenderer())
+		reportsGrid.addColumn(Report::getReportedTimestamp, RelativeDateUtils.getRelativeDateRenderer())
 				.setCaption(ReportColumn.REPORTED.caption).setId(ReportColumn.REPORTED.id).setWidth(150);
 
-	}
-
-	private ValueProvider<Report, String> getPriorityHtmlValueProvider() {
-		return new ValueProvider<Report, String>() {
-
-			@Override
-			public String apply(Report source) {
-				String singleP = "<span class=\"v-align-right v-align-middle bugrap-priority\" style=\" width: 15%; height: 100%; \" >&nbsp;&nbsp;</span>";
-				StringBuilder sb = new StringBuilder();
-				sb.append(
-						"<div class=\"v-horizontallayout v-layout v-horizontal v-widget v-has-width v-has-height v-align-middle\" style=\" width: 100%; height: 90%\">");
-				for (int i = 0; i < source.getPriority(); i++)
-					sb.append(singleP);
-				sb.append("</div>");
-				return sb.toString();
-			}
-		};
 	}
 
 	protected void openReport(Report item) {
@@ -411,27 +400,37 @@ public class ReportsOverviewLayout extends ReportsOverview {
 
 	private void initProjects() {
 		projectSelector.clear();
-		List<String> projectNames = ReportsProviderService.getProjectNames();
+		Set<Project> projectNames = dataSource().findProjects();
 		if (projectNames == null || projectNames.isEmpty()) {
 			projectCountLbl.setValue("0");
 			return;
 		}
 		projectSelector.setItems(projectNames);
-		projectSelector.setSelectedItem(projectNames.get(0));
+		projectSelector.setSelectedItem(projectNames.iterator().next());
 		projectCountLbl.setValue("" + projectNames.size());
 	}
 
-	private void updateVersions() {
+	private void updateVersions(Project project) {
 		versionSelector.clear();
-		List<String> versionsList = new ArrayList<>(
-				ReportsProviderService.getProjectVersions(projectSelector.getValue()));
+		if (project == null)
+			return;
+
+		List<ProjectVersion> versionsList = new ArrayList<>(dataSource().findProjectVersions(project));
 		if (versionsList.size() > 1)
-			versionsList.add(0, ALL_VERSIONS);
+			versionsList.add(0, allVersions);
+
 		versionSelector.setItems(versionsList);
-		String versionToSelect = getVersionFromCookie();
+		ProjectVersion versionToSelect = getVersionByName(getVersionFromCookie(), versionsList);
 		if (!versionsList.contains(versionToSelect))
 			versionToSelect = versionsList.get(0);
 		versionSelector.setSelectedItem(versionToSelect);
+	}
+
+	private ProjectVersion getVersionByName(String name, List<ProjectVersion> versions) {
+		if (name == null)
+			return null;
+
+		return versions.stream().filter(v -> name.equals(v.getVersion())).findFirst().orElse(null);
 	}
 
 	private String getVersionFromCookie() {
@@ -455,44 +454,31 @@ public class ReportsOverviewLayout extends ReportsOverview {
 	}
 
 	private void updateData() {
-		reportsGrid.deselectAll();
-		dp.setFilter(getFilter());
+		// reportsGrid.deselectAll();
+		dp = new ListDataProvider<>(dataSource().findReports(getQuery()));
+		reportsGrid.setDataProvider(dp);
 	}
 
-	private SerializablePredicate<Report> getFilter() {
-		return new SerializablePredicate<Report>() {
+	private ReportsQuery getQuery() {
+		ReportsQuery query = new ReportsQuery();
+		query.project = projectSelector.getValue();
+		if (versionSelector.getValue() != allVersions)
+			query.projectVersion = versionSelector.getValue();
 
-			@Override
-			public boolean test(Report t) {
-				return testProject(t) && testVersion(t) && testUser(t) && testStatus(t);
-			}
-		};
-	}
+		if (everyoneBtn.isEnabled())
+			query.reportAssignee = me;
 
-	private boolean testStatus(Report t) {
 		if (!openBtn.isEnabled())
-			return t.getStatus() == Status.OPEN;
+			query.reportStatuses = Collections.singleton(Status.OPEN);
+		else if (!allKindsBtn.isEnabled())
+			query.reportStatuses = null;
+		else
+			query.reportStatuses = content.getSelectedItems();
 
-		if (!allKindsBtn.isEnabled())
-			return true;
-
-		return content.getSelectedItems().contains(t.getStatus());
+		return query;
 	}
 
-	private boolean testProject(Report t) {
-		return t.getProject().equals(projectSelector.getValue());
-	}
-
-	private boolean testVersion(Report t) {
-		if (versionSelector.getValue().equals(ALL_VERSIONS))
-			return true;
-
-		return t.getVersion() != null && t.getVersion().equals(versionSelector.getValue());
-	}
-
-	private boolean testUser(Report t) {
-		if (!everyoneBtn.isEnabled())
-			return true;
-		return (accountBtn.getCaption() != null) && accountBtn.getCaption().equals(t.getAssignedTo());
+	private BugrapRepository dataSource() {
+		return ReportsProviderService.get();
 	}
 }

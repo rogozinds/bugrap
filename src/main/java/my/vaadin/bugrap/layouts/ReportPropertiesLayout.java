@@ -4,12 +4,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.vaadin.bugrap.domain.BugrapRepository;
+import org.vaadin.bugrap.domain.entities.Report;
+import org.vaadin.bugrap.domain.entities.Report.Priority;
+import org.vaadin.bugrap.domain.entities.Report.Status;
+import org.vaadin.bugrap.domain.entities.Report.Type;
+
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 
-import my.vaadin.bugrap.Report;
-import my.vaadin.bugrap.Report.IssueType;
-import my.vaadin.bugrap.Report.Status;
 import my.vaadin.bugrap.ReportProperties;
 import my.vaadin.bugrap.ReportsProviderService;
 import my.vaadin.bugrap.events.UpdateReportDetailsEvent;
@@ -25,7 +28,12 @@ public class ReportPropertiesLayout extends ReportProperties {
 		init();
 	}
 
-	private void doUpdateReport() {
+	private BugrapRepository dataSource() {
+		return ReportsProviderService.get();
+	}
+
+	private synchronized void doUpdateReport() {
+		List<Report> savedReports = new ArrayList<>();
 		for (Report report : reports) {
 			if (prioritySelector.getValue() != null)
 				report.setPriority(prioritySelector.getValue());
@@ -34,11 +42,14 @@ public class ReportPropertiesLayout extends ReportProperties {
 			if (statusSelector.getValue() != null)
 				report.setStatus(statusSelector.getValue());
 			if (assignedToSelector.getValue() != null)
-				report.setAssignedTo(assignedToSelector.getValue());
+				report.setAssigned(assignedToSelector.getValue());
 			if (versionSelector.getValue() != null)
 				report.setVersion(versionSelector.getValue());
+
+			savedReports.add(dataSource().save(report));
 		}
-		ReportsProviderService.updateReports(reports);
+		reports.clear();
+		reports.addAll(savedReports);
 		fireEvent(new UpdateReportDetailsEvent(this, new ArrayList<>(reports)));
 	}
 
@@ -58,10 +69,11 @@ public class ReportPropertiesLayout extends ReportProperties {
 				setReports(new ArrayList<>(reports));
 			}
 		});
-		prioritySelector.setItems(1, 2, 3, 4);
-		typeSelector.setItems(IssueType.values());
+
+		prioritySelector.setItems(Priority.values());
+		typeSelector.setItems(Type.values());
 		statusSelector.setItems(Status.values());
-		assignedToSelector.setItems(ReportsProviderService.getUsers());
+		assignedToSelector.setItems(dataSource().findReporters());
 
 		openInNewWnd.addClickListener(new ClickListener() {
 
@@ -84,7 +96,7 @@ public class ReportPropertiesLayout extends ReportProperties {
 		}
 
 		Report report = this.reports.get(0);
-		versionSelector.setItems(ReportsProviderService.getProjectVersions(report.getProject()));
+		versionSelector.setItems(dataSource().findProjectVersions(report.getProject()));
 		if (this.reports.size() == 1) {
 			openInNewWnd.setVisible(true);
 			reportName.setValue(report.getSummary());
@@ -104,7 +116,14 @@ public class ReportPropertiesLayout extends ReportProperties {
 		if (reports.size() == 1)
 			return reports.get(0);
 
-		Report result = new Report(reports.get(0));
+		Report result = new Report();
+		Report first = reports.get(0);
+		result.setPriority(first.getPriority());
+		result.setType(first.getType());
+		result.setStatus(first.getStatus());
+		result.setAssigned(first.getAssigned());
+		result.setVersion(first.getVersion());
+
 		for (int i = 1; i < reports.size(); i++) {
 			Report curRep = reports.get(i);
 			if (result.getPriority() != null && !result.getPriority().equals(curRep.getPriority()))
@@ -116,8 +135,8 @@ public class ReportPropertiesLayout extends ReportProperties {
 			if (result.getStatus() != null && !result.getStatus().equals(curRep.getStatus()))
 				result.setStatus(null);
 
-			if (result.getAssignedTo() != null && !result.getAssignedTo().equals(curRep.getAssignedTo()))
-				result.setAssignedTo(null);
+			if (result.getAssigned() != null && !result.getAssigned().equals(curRep.getAssigned()))
+				result.setAssigned(null);
 
 			if (result.getVersion() != null && !result.getVersion().equals(curRep.getVersion()))
 				result.setVersion(null);
@@ -142,7 +161,7 @@ public class ReportPropertiesLayout extends ReportProperties {
 		prioritySelector.setValue(report.getPriority());
 		typeSelector.setValue(report.getType());
 		statusSelector.setValue(report.getStatus());
-		assignedToSelector.setValue(report.getAssignedTo());
+		assignedToSelector.setValue(report.getAssigned());
 		versionSelector.setValue(report.getVersion());
 	}
 

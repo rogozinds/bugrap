@@ -28,7 +28,7 @@ public class ReportsOverview extends VerticalLayout {
 	protected HorizontalLayout topHeader;
 	protected VerticalLayout headerContainer;
 	protected HorizontalLayout firstLineHeader;
-	protected NativeSelect<java.lang.String> projectSelector;
+	protected NativeSelect<org.vaadin.bugrap.domain.entities.Project> projectSelector;
 	protected HorizontalLayout userButtonsContainer;
 	protected Button accountBtn;
 	protected Button logoutBtn;
@@ -38,7 +38,7 @@ public class ReportsOverview extends VerticalLayout {
 	protected Button manageProjectsBtn;
 	protected Label projectCountLbl;
 	protected HorizontalLayout versionsContainer;
-	protected NativeSelect<java.lang.String> versionSelector;
+	protected NativeSelect<org.vaadin.bugrap.domain.entities.ProjectVersion> versionSelector;
 	protected DistributionBar distributionBar;
 	protected HorizontalLayout filtersContainer;
 	protected Button onlyMeBtn;
@@ -49,7 +49,7 @@ public class ReportsOverview extends VerticalLayout {
 	protected Button customBtn;
 	protected VerticalSplitPanel mainSplitter;
 	protected Panel gridContainer;
-	protected Grid<my.vaadin.bugrap.Report> reportsGrid;
+	protected Grid<org.vaadin.bugrap.domain.entities.Report> reportsGrid;
 	protected HorizontalLayout bottomFooter;
 
 	public ReportsOverview() {

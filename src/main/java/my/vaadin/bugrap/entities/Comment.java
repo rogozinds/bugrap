@@ -1,4 +1,4 @@
-package my.vaadin.bugrap;
+package my.vaadin.bugrap.entities;
 
 import java.util.Date;
 

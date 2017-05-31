@@ -24,11 +24,11 @@ public class ReportProperties extends VerticalLayout {
 	protected Panel openBtnContainer;
 	protected Button openInNewWnd;
 	protected Label reportName;
-	protected NativeSelect<java.lang.Integer> prioritySelector;
-	protected NativeSelect<my.vaadin.bugrap.Report.IssueType> typeSelector;
-	protected NativeSelect<my.vaadin.bugrap.Report.Status> statusSelector;
-	protected NativeSelect<java.lang.String> assignedToSelector;
-	protected NativeSelect<java.lang.String> versionSelector;
+	protected NativeSelect<org.vaadin.bugrap.domain.entities.Report.Priority> prioritySelector;
+	protected NativeSelect<org.vaadin.bugrap.domain.entities.Report.Type> typeSelector;
+	protected NativeSelect<org.vaadin.bugrap.domain.entities.Report.Status> statusSelector;
+	protected NativeSelect<org.vaadin.bugrap.domain.entities.Reporter> assignedToSelector;
+	protected NativeSelect<org.vaadin.bugrap.domain.entities.ProjectVersion> versionSelector;
 	protected Button updateBtn;
 	protected Button revertBtn;
 

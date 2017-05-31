@@ -2,6 +2,8 @@ package my.vaadin.bugrap.layouts;
 
 import java.util.Set;
 
+import org.vaadin.bugrap.domain.entities.Report.Status;
+
 import com.vaadin.data.HasValue.ValueChangeEvent;
 import com.vaadin.data.HasValue.ValueChangeListener;
 import com.vaadin.ui.CheckBoxGroup;
@@ -9,8 +11,6 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.PopupView.Content;
 import com.vaadin.ui.VerticalLayout;
-
-import my.vaadin.bugrap.Report.Status;
 
 public abstract class CustomStatusPopupContent implements Content {
 

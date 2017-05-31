@@ -1,8 +1,8 @@
 package my.vaadin.bugrap.utils;
 
-import com.vaadin.server.Page;
+import org.vaadin.bugrap.domain.entities.Report;
 
-import my.vaadin.bugrap.Report;
+import com.vaadin.server.Page;
 
 public class ReportWindowOpener {
 

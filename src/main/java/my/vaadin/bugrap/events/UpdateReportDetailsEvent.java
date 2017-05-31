@@ -2,9 +2,9 @@ package my.vaadin.bugrap.events;
 
 import java.util.List;
 
-import com.vaadin.ui.Component;
+import org.vaadin.bugrap.domain.entities.Report;
 
-import my.vaadin.bugrap.Report;
+import com.vaadin.ui.Component;
 
 public class UpdateReportDetailsEvent extends Component.Event {
 

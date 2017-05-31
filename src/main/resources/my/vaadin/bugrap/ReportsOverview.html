@@ -13,7 +13,7 @@
    <vaadin-horizontal-layout style-name="top-header" spacing="false" width-full height="25px" _id="topHeader" :center></vaadin-horizontal-layout>
    <vaadin-vertical-layout style-name="bugrap-padding" spacing="false" height="167px" margin="false" _id="headerContainer">
     <vaadin-horizontal-layout spacing="false" responsive width-full height="35px" _id="firstLineHeader" :expand>
-     <vaadin-native-select empty-selection-allowed="false" style-name="bugrap-selector" data-item-type="java.lang.String" _id="projectSelector"></vaadin-native-select>
+     <vaadin-native-select empty-selection-allowed="false" style-name="bugrap-selector" data-item-type="org.vaadin.bugrap.domain.entities.Project" _id="projectSelector"></vaadin-native-select>
      <vaadin-horizontal-layout spacing="false" _id="userButtonsContainer" :middle :right>
       <vaadin-button icon="fonticon://Vaadin-Icons/e80d" style-name="bugrap-border-right bugrap-btn" plain-text _id="accountBtn" :middle>
         Marc 
@@ -44,7 +44,7 @@
      <vaadin-label plain-text :middle>
        Reports for 
      </vaadin-label>
-     <vaadin-native-select empty-selection-allowed="false" style-name="bugrap-selector bugrap-selector-bold" data-item-type="java.lang.String" _id="versionSelector" :middle></vaadin-native-select>
+     <vaadin-native-select empty-selection-allowed="false" style-name="bugrap-selector bugrap-selector-bold" data-item-type="org.vaadin.bugrap.domain.entities.ProjectVersion" _id="versionSelector" :middle></vaadin-native-select>
      <my_vaadin_distributionbar-distribution-bar width="80%" _id="distributionBar" :middle :expand></my_vaadin_distributionbar-distribution-bar>
     </vaadin-horizontal-layout>
     <vaadin-horizontal-layout responsive width-full height="30px" _id="filtersContainer">
@@ -81,7 +81,7 @@
    </vaadin-vertical-layout>
    <vaadin-vertical-split-panel locked split-position="100%" _id="mainSplitter" :expand>
     <vaadin-panel size-full _id="gridContainer">
-     <vaadin-grid column-resize-mode="simple" responsive size-full data-item-type="my.vaadin.bugrap.Report" _id="reportsGrid"></vaadin-grid>
+     <vaadin-grid column-resize-mode="simple" responsive size-full data-item-type="org.vaadin.bugrap.domain.entities.Report" _id="reportsGrid"></vaadin-grid>
     </vaadin-panel>
    </vaadin-vertical-split-panel>
    <vaadin-horizontal-layout style-name="bottom-footer" spacing="false" width-full height="25px" _id="bottomFooter" :bottom :center></vaadin-horizontal-layout>
