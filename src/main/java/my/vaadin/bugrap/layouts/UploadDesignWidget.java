@@ -62,4 +62,8 @@ public class UploadDesignWidget extends UploadDesign implements Upload.ProgressL
 	public byte[] getAttachment() {
 		return stream.toByteArray();
 	}
+
+	public String getFileName() {
+		return fileNameLbl.getValue();
+	}
 }

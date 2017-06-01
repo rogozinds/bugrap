@@ -82,11 +82,12 @@ public class ReportWindowLayout extends ReportWindow {
 					String message = commentArea.getValue();
 
 					if (!hasAttachments())
-						reportDetails.addComment(doSaveComment(author, message, null, report));
+						reportDetails.addComment(doSaveComment(author, message, null, null, report));
 					else {
 						for (Component c : attachmentWidgetsContainer) {
+							UploadDesignWidget w = (UploadDesignWidget) c;
 							reportDetails.addComment(
-									doSaveComment(author, message, ((UploadDesignWidget) c).getAttachment(), report));
+									doSaveComment(author, message, w.getFileName(), w.getAttachment(), report));
 						}
 					}
 				} finally {
@@ -105,12 +106,14 @@ public class ReportWindowLayout extends ReportWindow {
 
 	}
 
-	private Comment doSaveComment(Reporter author, String message, byte[] attachment, Report report) {
+	private Comment doSaveComment(Reporter author, String message, String attachmentName, byte[] attachment,
+			Report report) {
 		Comment comment = new Comment();
 		comment.setAuthor(author);
 		comment.setComment(message);
 		if (attachment != null) {
 			comment.setAttachment(attachment);
+			comment.setAttachmentName(attachmentName);
 			comment.setType(Comment.Type.ATTACHMENT);
 		} else
 			comment.setType(Comment.Type.COMMENT);
@@ -121,6 +124,7 @@ public class ReportWindowLayout extends ReportWindow {
 	private void clearComment() {
 		commentArea.clear();
 		attachmentWidgetsContainer.removeAllComponents();
+		attachmentWrapper.setVisible(false);
 		commentArea.focus();
 	}
 

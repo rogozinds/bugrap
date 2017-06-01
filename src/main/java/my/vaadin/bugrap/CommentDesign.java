@@ -20,6 +20,7 @@ import com.vaadin.ui.declarative.Design;
 public class CommentDesign extends HorizontalLayout {
 	protected Label userNameAndDate;
 	protected Label commentSection;
+	protected HorizontalLayout attachmentsContainer;
 
 	public CommentDesign() {
 		Design.read(this);
