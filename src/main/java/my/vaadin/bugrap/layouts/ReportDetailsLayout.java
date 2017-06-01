@@ -1,6 +1,5 @@
 package my.vaadin.bugrap.layouts;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -8,7 +7,6 @@ import org.vaadin.bugrap.domain.entities.Comment;
 import org.vaadin.bugrap.domain.entities.Report;
 
 import com.vaadin.shared.Registration;
-import com.vaadin.ui.VerticalLayout;
 
 import my.vaadin.bugrap.ReportDetails;
 import my.vaadin.bugrap.ReportsProviderService;
@@ -23,27 +21,30 @@ public class ReportDetailsLayout extends ReportDetails {
 		return reportProperties.addListener(listener);
 	}
 
-	public void setReports(Collection<Report> selectedReports) {
-		if (selectedReports == null || selectedReports.isEmpty()) {
+	public void setReport(Report report) {
+		if (report == null) {
 			clear();
 			return;
 		}
-		Report report = selectedReports.iterator().next();
 		reportProperties.setReports(Collections.singletonList(report));
 		setComments(report);
 	}
 
 	private void setComments(Report report) {
 		List<Comment> comments = ReportsProviderService.get().findComments(report);
-		VerticalLayout commentsContainer = new VerticalLayout();
-		commentsSection.setContent(commentsContainer);
+		commentsContainer.removeAllComponents();
 		for (Comment comment : comments) {
 			commentsContainer.addComponent(new CommentDesignLayout(comment));
 		}
 	}
 
+	public void addComment(Comment comment) {
+		commentsContainer.addComponent(new CommentDesignLayout(comment));
+	}
+
 	public void clear() {
 		reportProperties.clear();
+		commentsContainer.removeAllComponents();
 	}
 
 	public void showOpenInNewWindowBtn(boolean value) {

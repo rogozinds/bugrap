@@ -2,12 +2,17 @@ package my.vaadin.bugrap;
 
 import javax.servlet.annotation.WebServlet;
 
+import org.vaadin.bugrap.domain.entities.Reporter;
+
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.UI;
 
+import my.vaadin.bugrap.exceptions.BugrapException;
 import my.vaadin.bugrap.layouts.ReportsOverviewLayout;
 
 /**
@@ -24,7 +29,31 @@ public class MyUI extends UI {
 
 	@Override
 	protected void init(VaadinRequest vaadinRequest) {
-		setContent(new ReportsOverviewLayout());
+		try {
+			UserData userData = AppGlobalData.getUserData();
+			if (userData == null)
+				throw new BugrapException("Something went wrong");
+
+			if (userData.getCurrentUser() == null)
+				userData.setCurrentUser(authorize());
+
+			setContent(new ReportsOverviewLayout());
+		} catch (BugrapException e) {
+			Notification.show(e.getMessage(), Type.ERROR_MESSAGE);
+		}
+	}
+
+	private Reporter authorize() throws BugrapException {
+		Reporter authUser = null;
+
+		try {
+			authUser = ReportsProviderService.get().authenticate("developer", "developer");
+		} catch (Exception e) {
+		}
+
+		if (authUser == null)
+			throw new BugrapException("Authentication failed.");
+		return authUser;
 	}
 
 	@WebServlet(urlPatterns = "/reports/*", name = "ReportUIServlet", asyncSupported = true)

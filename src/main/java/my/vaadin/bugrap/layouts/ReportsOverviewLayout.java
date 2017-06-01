@@ -35,7 +35,7 @@ import com.vaadin.ui.renderers.HtmlRenderer;
 import my.vaadin.bugrap.ReportsOverview;
 import my.vaadin.bugrap.ReportsProviderService;
 import my.vaadin.bugrap.events.UpdateReportDetailsEvent;
-import my.vaadin.bugrap.utils.PriorityHtmlValueProvider;
+import my.vaadin.bugrap.utils.PriorityHtmlProvider;
 import my.vaadin.bugrap.utils.RelativeDateUtils;
 import my.vaadin.bugrap.utils.ReportWindowOpener;
 
@@ -163,7 +163,7 @@ public class ReportsOverviewLayout extends ReportsOverview {
 				mainSplitter.setSecondComponent(reportDetails);
 			}
 
-			reportDetails.setReports(allSelectedItems);
+			reportDetails.setReport(allSelectedItems.iterator().next());
 			mainSplitter.setLocked(false);
 			mainSplitter.setSplitPosition(50, Unit.PERCENTAGE);
 
@@ -254,7 +254,7 @@ public class ReportsOverviewLayout extends ReportsOverview {
 		setupColumns();
 
 		reportsGrid.setSelectionMode(SelectionMode.MULTI);
-		reportsGrid.getSelectionModel().setUserSelectionAllowed(false);
+		// reportsGrid.getSelectionModel().setUserSelectionAllowed(false);
 		//
 		// gridContainer.addShortcutListener(new ShortcutListener("upPress2",
 		// ShortcutAction.KeyCode.ARROW_UP, null) {
@@ -329,17 +329,6 @@ public class ReportsOverviewLayout extends ReportsOverview {
 					openReport(event.getItem());
 					return;
 				}
-
-				if (!reportsGrid.getSelectionModel().isSelected(event.getItem())) {
-					if (!event.getMouseEventDetails().isCtrlKey())
-						reportsGrid.deselectAll();
-					reportsGrid.select(event.getItem());
-				} else {
-					if (!event.getMouseEventDetails().isCtrlKey())
-						reportsGrid.deselectAll();
-					else
-						reportsGrid.deselect(event.getItem());
-				}
 			}
 		});
 
@@ -374,7 +363,7 @@ public class ReportsOverviewLayout extends ReportsOverview {
 		reportsGrid.addColumn(Report::getVersion).setCaption(ReportColumn.VERSION.caption)
 				.setId(ReportColumn.VERSION.id).setWidth(200);
 
-		reportsGrid.addColumn(PriorityHtmlValueProvider.get(), new HtmlRenderer())
+		reportsGrid.addColumn(PriorityHtmlProvider.fromReport(), new HtmlRenderer())
 				.setCaption(ReportColumn.PRIORITY.caption).setId(ReportColumn.PRIORITY.id).setWidth(110);
 
 		reportsGrid.addColumn(Report::getType).setCaption(ReportColumn.TYPE.caption).setId(ReportColumn.TYPE.id)
@@ -435,6 +424,8 @@ public class ReportsOverviewLayout extends ReportsOverview {
 
 	private String getVersionFromCookie() {
 		Cookie[] cookies = VaadinService.getCurrentRequest().getCookies();
+		if (cookies == null)
+			return "";
 		for (Cookie cookie : cookies) {
 			if (COOKIE_VERSION.equals(cookie.getName())) {
 				return cookie.getValue();

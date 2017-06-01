@@ -20,6 +20,7 @@ import my.vaadin.bugrap.layouts.ReportPropertiesLayout;
 @SuppressWarnings("serial")
 public class ReportDetails extends VerticalLayout {
 	protected ReportPropertiesLayout reportProperties;
+	protected VerticalLayout commentsContainer;
 	protected Panel commentsSection;
 
 	public ReportDetails() {
