@@ -18,15 +18,15 @@
     </vaadin-horizontal-layout>
     <my_vaadin_bugrap_layouts-report-details-layout size-full _id="reportDetails" :expand></my_vaadin_bugrap_layouts-report-details-layout>
     <vaadin-vertical-layout style-name="bottom-footer bugrap-padding" margin="false">
-     <vaadin-text-area width-full _id="commentArea"></vaadin-text-area>
-     <vaadin-horizontal-layout width-full></vaadin-horizontal-layout>
+     <vaadin-text-area width-full height="140px" _id="commentArea"></vaadin-text-area>
+     <vaadin-horizontal-layout style-name="bugrap-attach-cont" spacing="false" width-full _id="attachmentWrapper">
+      <vaadin-horizontal-layout style-name="bugrap-padding" responsive _id="attachmentWidgetsContainer"></vaadin-horizontal-layout>
+     </vaadin-horizontal-layout>
      <vaadin-horizontal-layout responsive :bottom>
       <vaadin-button style-name="bugrap-regular-btn" plain-text _id="doneBtn">
         Done 
       </vaadin-button>
-      <vaadin-button style-name="bugrap-regular-btn" plain-text _id="attachBtn">
-        Attachment... 
-      </vaadin-button>
+      <vaadin-upload button-caption="Attachment..." style-name="bugrap-regular-btn" _id="attachUpld"></vaadin-upload>
       <vaadin-button style-name="bugrap-regular-btn" plain-text _id="cancelBtn">
         Cancel 
       </vaadin-button>

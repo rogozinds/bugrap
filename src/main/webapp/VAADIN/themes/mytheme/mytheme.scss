@@ -108,6 +108,20 @@
 		text-align: center;
 	}
 
+	.bugrap-upload{
+		background: transparent;
+		border: none;
+		color: black;
+		border-radius: 10px;
+		text-align: center;
+		padding: 5px;
+	}
+
+.bugrap-upload:hover{
+	background: #919191;
+	color: white;
+	}
+
 .v-select {
     border: none;
 }
@@ -154,6 +168,11 @@
 
 .bugrap-comment-user{
 	color: #919191;
+	}
+
+.bugrap-attach-cont{
+	background: #EBEBEB;
+	border-radius: 10px;
 	}
 
 .bugrap-searchfield{
@@ -204,6 +223,11 @@
   	border-radius: 10px;		
   	height: 25px;
  }
+
+.v-upload .v-button{
+	border-radius: 10px;
+	height: 25px;
+	}
 
 .bugrap-transparent {
 	background: transparent;

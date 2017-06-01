@@ -6,6 +6,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TextArea;
+import com.vaadin.ui.Upload;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.declarative.Design;
 import my.vaadin.bugrap.layouts.ReportDetailsLayout;
@@ -28,8 +29,10 @@ public class ReportWindow extends VerticalLayout {
 	protected Label versionLbl;
 	protected ReportDetailsLayout reportDetails;
 	protected TextArea commentArea;
+	protected HorizontalLayout attachmentWrapper;
+	protected HorizontalLayout attachmentWidgetsContainer;
 	protected Button doneBtn;
-	protected Button attachBtn;
+	protected Upload attachUpld;
 	protected Button cancelBtn;
 	protected HorizontalLayout bottomFooter;
 

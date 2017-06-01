@@ -12574,6 +12574,20 @@ div.v-layout.v-horizontal.v-widget {
 	text-align: center;
 }
 
+.mytheme .bugrap-upload {
+	background: transparent;
+	border: none;
+	color: black;
+	border-radius: 10px;
+	text-align: center;
+	padding: 5px;
+}
+
+.mytheme .bugrap-upload:hover {
+	background: #919191;
+	color: white;
+}
+
 .mytheme .v-select {
 	border: none;
 }
@@ -12627,6 +12641,11 @@ div.v-layout.v-horizontal.v-widget {
 	color: #919191;
 }
 
+.mytheme .bugrap-attach-cont {
+	background: #EBEBEB;
+	border-radius: 10px;
+}
+
 .mytheme .bugrap-searchfield {
 	padding: 5px;
 	border-style: solid;
@@ -12674,6 +12693,11 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .mytheme .bugrap-regular-btn {
+	border-radius: 10px;
+	height: 25px;
+}
+
+.mytheme .v-upload .v-button {
 	border-radius: 10px;
 	height: 25px;
 }

@@ -2,11 +2,15 @@ package my.vaadin.bugrap.layouts;
 
 import org.vaadin.bugrap.domain.entities.Comment;
 import org.vaadin.bugrap.domain.entities.Report;
+import org.vaadin.bugrap.domain.entities.Reporter;
 
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Notification.Type;
+import com.vaadin.ui.Upload.StartedEvent;
+import com.vaadin.ui.Upload.StartedListener;
 
 import my.vaadin.bugrap.AppGlobalData;
 import my.vaadin.bugrap.ReportWindow;
@@ -15,6 +19,7 @@ import my.vaadin.bugrap.ReportsProviderService;
 public class ReportWindowLayout extends ReportWindow {
 
 	private final Report report;
+	private byte[] attachment;
 
 	public ReportWindowLayout(long id) {
 		report = ReportsProviderService.get().getReportById(id);
@@ -27,6 +32,39 @@ public class ReportWindowLayout extends ReportWindow {
 		setReport(report);
 
 		initClickHandlers(report);
+		initUploader();
+		attachmentWrapper.setVisible(false);
+	}
+
+	private void initUploader() {
+		attachUpld.addStartedListener(new StartedListener() {
+
+			@Override
+			public void uploadStarted(StartedEvent event) {
+				UploadDesignWidget w = new UploadDesignWidget(event.getFilename());
+				w.addDeleteAttachmentHandler(new ClickListener() {
+
+					@Override
+					public void buttonClick(ClickEvent event) {
+						attachmentWidgetsContainer.removeComponent(w);
+						if (!hasAttachments())
+							attachmentWrapper.setVisible(false);
+					}
+				});
+				attachUpld.setReceiver(w);
+				attachmentWidgetsContainer.addComponent(w);
+				attachUpld.addProgressListener(w);
+				attachUpld.addFailedListener(w);
+				attachUpld.addSucceededListener(w);
+				attachUpld.addFinishedListener(w);
+				attachmentWrapper.setVisible(true);
+
+			}
+		});
+	}
+
+	private boolean hasAttachments() {
+		return attachmentWidgetsContainer.getComponentCount() > 0;
 	}
 
 	private void initClickHandlers(final Report report) {
@@ -39,16 +77,20 @@ public class ReportWindowLayout extends ReportWindow {
 					return;
 				}
 
-				Comment comment = new Comment();
-				comment.setType(Comment.Type.COMMENT);
-				comment.setAuthor(AppGlobalData.getUserData().getCurrentUser());
-				comment.setComment(commentArea.getValue());
-				comment.setReport(report);
 				try {
-					comment = ReportsProviderService.get().save(comment);
-					reportDetails.addComment(comment);
+					Reporter author = AppGlobalData.getUserData().getCurrentUser();
+					String message = commentArea.getValue();
+
+					if (!hasAttachments())
+						reportDetails.addComment(doSaveComment(author, message, null, report));
+					else {
+						for (Component c : attachmentWidgetsContainer) {
+							reportDetails.addComment(
+									doSaveComment(author, message, ((UploadDesignWidget) c).getAttachment(), report));
+						}
+					}
 				} finally {
-					commentArea.clear();
+					clearComment();
 				}
 			}
 		});
@@ -57,11 +99,29 @@ public class ReportWindowLayout extends ReportWindow {
 
 			@Override
 			public void buttonClick(ClickEvent event) {
-				commentArea.clear();
-
-				commentArea.focus();
+				clearComment();
 			}
 		});
+
+	}
+
+	private Comment doSaveComment(Reporter author, String message, byte[] attachment, Report report) {
+		Comment comment = new Comment();
+		comment.setAuthor(author);
+		comment.setComment(message);
+		if (attachment != null) {
+			comment.setAttachment(attachment);
+			comment.setType(Comment.Type.ATTACHMENT);
+		} else
+			comment.setType(Comment.Type.COMMENT);
+		comment.setReport(report);
+		return ReportsProviderService.get().save(comment);
+	}
+
+	private void clearComment() {
+		commentArea.clear();
+		attachmentWidgetsContainer.removeAllComponents();
+		commentArea.focus();
 	}
 
 	private void setReport(Report report) {
