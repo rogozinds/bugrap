@@ -8,6 +8,7 @@ import com.vaadin.ui.UI;
 
 import my.vaadin.bugrap.exceptions.BugrapException;
 import my.vaadin.bugrap.layouts.ReportWindowLayout;
+import my.vaadin.bugrap.utils.BugrapWindowOpener;
 
 @Theme("mytheme")
 public class SingleReportUI extends UI {
@@ -17,7 +18,7 @@ public class SingleReportUI extends UI {
 		try {
 			UserData userData = AppGlobalData.getUserData();
 			if (userData == null || userData.getCurrentUser() == null)
-				throw new BugrapException("Unauthorized!");
+				BugrapWindowOpener.openLogin();
 
 			int id = -1;
 			String idStr = "";

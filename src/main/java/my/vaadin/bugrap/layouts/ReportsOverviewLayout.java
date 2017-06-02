@@ -36,9 +36,9 @@ import my.vaadin.bugrap.AppGlobalData;
 import my.vaadin.bugrap.ReportsOverview;
 import my.vaadin.bugrap.ReportsProviderService;
 import my.vaadin.bugrap.events.UpdateReportDetailsEvent;
+import my.vaadin.bugrap.utils.BugrapWindowOpener;
 import my.vaadin.bugrap.utils.PriorityHtmlProvider;
 import my.vaadin.bugrap.utils.RelativeDateUtils;
-import my.vaadin.bugrap.utils.BugrapWindowOpener;
 
 public class ReportsOverviewLayout extends ReportsOverview {
 
@@ -83,6 +83,15 @@ public class ReportsOverviewLayout extends ReportsOverview {
 
 		allVersions = new ProjectVersion();
 		allVersions.setVersion(ALL_VERSIONS);
+
+		logoutBtn.addClickListener(new ClickListener() {
+
+			@Override
+			public void buttonClick(ClickEvent event) {
+				AppGlobalData.getUserData().setCurrentUser(null);
+				BugrapWindowOpener.openLogin();
+			}
+		});
 	}
 
 	private void init() {

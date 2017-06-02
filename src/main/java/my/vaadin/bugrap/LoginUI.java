@@ -43,7 +43,7 @@ public class LoginUI extends UI {
 		}
 	}
 
-	private Reporter authorize(String name, String password) throws BugrapException {
+	private void authorize(String name, String password) throws BugrapException {
 		Reporter authUser = null;
 		try {
 			authUser = ReportsProviderService.get().authenticate(name, name);
@@ -55,7 +55,6 @@ public class LoginUI extends UI {
 
 		AppGlobalData.getUserData().setCurrentUser(authUser);
 		Notification.show("You are authorized as: " + authUser.getName());
-		return authUser;
 	}
 
 }
