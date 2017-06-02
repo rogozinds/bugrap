@@ -1,8 +1,11 @@
 package my.vaadin.bugrap.layouts;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.io.OutputStream;
 
+import com.vaadin.server.StreamResource;
 import com.vaadin.shared.Registration;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Notification;
@@ -21,22 +24,27 @@ public class UploadDesignWidget extends UploadDesign implements Upload.ProgressL
 	private ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
 	public UploadDesignWidget(String fileName) {
-		fileNameLbl.setValue(fileName);
-		init();
+		fileNameLink.setCaption(fileName);
+		fileNameLink.setEnabled(false);
 	}
 
 	public Registration addDeleteAttachmentHandler(ClickListener listener) {
 		return cancelBtn.addClickListener(listener);
 	}
 
-	private void init() {
-
-	}
-
 	@Override
 	public void uploadFinished(FinishedEvent event) {
 		progressUpld.setVisible(false);
-		Notification.show("" + stream.toString());
+		StreamResource streamResource = new StreamResource(new StreamResource.StreamSource() {
+			@Override
+			public InputStream getStream() {
+				return new ByteArrayInputStream(getAttachment());
+			}
+		}, fileNameLink.getCaption());
+
+		fileNameLink.setResource(streamResource);
+		fileNameLink.setTargetName("_blank");
+		fileNameLink.setEnabled(true);
 	}
 
 	@Override
@@ -64,6 +72,6 @@ public class UploadDesignWidget extends UploadDesign implements Upload.ProgressL
 	}
 
 	public String getFileName() {
-		return fileNameLbl.getValue();
+		return fileNameLink.getCaption();
 	}
 }

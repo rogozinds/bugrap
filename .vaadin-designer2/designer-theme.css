@@ -12705,3 +12705,8 @@ div.v-layout.v-horizontal.v-widget {
 .mytheme .bugrap-transparent {
 	background: transparent;
 }
+
+.mytheme .bugrap-icon-btn {
+	padding-left: 5px;
+	padding-right: 5px;
+}

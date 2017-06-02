@@ -32,6 +32,7 @@ import com.vaadin.ui.PopupView;
 import com.vaadin.ui.components.grid.ItemClickListener;
 import com.vaadin.ui.renderers.HtmlRenderer;
 
+import my.vaadin.bugrap.AppGlobalData;
 import my.vaadin.bugrap.ReportsOverview;
 import my.vaadin.bugrap.ReportsProviderService;
 import my.vaadin.bugrap.events.UpdateReportDetailsEvent;
@@ -72,7 +73,7 @@ public class ReportsOverviewLayout extends ReportsOverview {
 	}
 
 	private void initBasicData() {
-		me = dataSource().findReporters().iterator().next();
+		me = AppGlobalData.getUserData().getCurrentUser();
 		if (me == null) {
 			me = new Reporter();
 			me.setName("undefined");
