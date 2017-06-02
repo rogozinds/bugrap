@@ -38,7 +38,7 @@ import my.vaadin.bugrap.ReportsProviderService;
 import my.vaadin.bugrap.events.UpdateReportDetailsEvent;
 import my.vaadin.bugrap.utils.PriorityHtmlProvider;
 import my.vaadin.bugrap.utils.RelativeDateUtils;
-import my.vaadin.bugrap.utils.ReportWindowOpener;
+import my.vaadin.bugrap.utils.BugrapWindowOpener;
 
 public class ReportsOverviewLayout extends ReportsOverview {
 
@@ -385,7 +385,7 @@ public class ReportsOverviewLayout extends ReportsOverview {
 	}
 
 	protected void openReport(Report item) {
-		ReportWindowOpener.openReport(item);
+		BugrapWindowOpener.openReport(item);
 	}
 
 	private void initProjects() {

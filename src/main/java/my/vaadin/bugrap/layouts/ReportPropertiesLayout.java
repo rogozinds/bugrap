@@ -16,7 +16,7 @@ import com.vaadin.ui.Button.ClickListener;
 import my.vaadin.bugrap.ReportProperties;
 import my.vaadin.bugrap.ReportsProviderService;
 import my.vaadin.bugrap.events.UpdateReportDetailsEvent;
-import my.vaadin.bugrap.utils.ReportWindowOpener;
+import my.vaadin.bugrap.utils.BugrapWindowOpener;
 
 public class ReportPropertiesLayout extends ReportProperties {
 
@@ -82,7 +82,7 @@ public class ReportPropertiesLayout extends ReportProperties {
 				if (reports.isEmpty())
 					return;
 
-				ReportWindowOpener.openReport(reports.get(0));
+				BugrapWindowOpener.openReport(reports.get(0));
 			}
 		});
 	}

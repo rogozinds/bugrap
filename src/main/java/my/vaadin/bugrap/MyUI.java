@@ -14,6 +14,7 @@ import com.vaadin.ui.UI;
 
 import my.vaadin.bugrap.exceptions.BugrapException;
 import my.vaadin.bugrap.layouts.ReportsOverviewLayout;
+import my.vaadin.bugrap.utils.BugrapWindowOpener;
 
 /**
  * This UI is the application entry point. A UI may either represent a browser
@@ -35,7 +36,7 @@ public class MyUI extends UI {
 				throw new BugrapException("Something went wrong");
 
 			if (userData.getCurrentUser() == null)
-				userData.setCurrentUser(authorize());
+				BugrapWindowOpener.openLogin();
 
 			setContent(new ReportsOverviewLayout());
 		} catch (BugrapException e) {
@@ -43,22 +44,14 @@ public class MyUI extends UI {
 		}
 	}
 
-	private Reporter authorize() throws BugrapException {
-		Reporter authUser = null;
-
-		try {
-			authUser = ReportsProviderService.get().authenticate("developer", "developer");
-		} catch (Exception e) {
-		}
-
-		if (authUser == null)
-			throw new BugrapException("Authentication failed.");
-		return authUser;
-	}
-
 	@WebServlet(urlPatterns = "/reports/*", name = "ReportUIServlet", asyncSupported = true)
 	@VaadinServletConfiguration(ui = SingleReportUI.class, productionMode = false)
 	public static class ReportUIServlet extends VaadinServlet {
+	}
+
+	@WebServlet(urlPatterns = "/auth/*", name = "LoginUIServlet", asyncSupported = true)
+	@VaadinServletConfiguration(ui = LoginUI.class, productionMode = false)
+	public static class LoginUIServlet extends VaadinServlet {
 	}
 
 	@WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)

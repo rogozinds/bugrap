@@ -12660,6 +12660,7 @@ div.v-layout.v-horizontal.v-widget {
 	font-style: italic;
 	background-color: transparent;
 	box-shadow: none;
+	padding-right: 5px;
 }
 
 .mytheme .bugrap-searchfield-field:focus {
