@@ -14,6 +14,7 @@ import com.vaadin.ui.UI;
 
 import my.vaadin.bugrap.exceptions.BugrapException;
 import my.vaadin.bugrap.layouts.ReportsOverviewLayout;
+import my.vaadin.bugrap.layouts.ReportsOverviewLayoutPresenter;
 import my.vaadin.bugrap.utils.BugrapWindowOpener;
 
 /**

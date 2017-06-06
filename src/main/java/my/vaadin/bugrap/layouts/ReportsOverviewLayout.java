@@ -1,54 +1,30 @@
 package my.vaadin.bugrap.layouts;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import javax.servlet.http.Cookie;
-
-import org.vaadin.bugrap.domain.BugrapRepository;
-import org.vaadin.bugrap.domain.BugrapRepository.ReportsQuery;
 import org.vaadin.bugrap.domain.entities.Project;
 import org.vaadin.bugrap.domain.entities.ProjectVersion;
 import org.vaadin.bugrap.domain.entities.Report;
-import org.vaadin.bugrap.domain.entities.Report.Status;
-import org.vaadin.bugrap.domain.entities.Reporter;
 
 import com.vaadin.data.provider.GridSortOrderBuilder;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.event.ShortcutListener;
-import com.vaadin.event.selection.SelectionEvent;
-import com.vaadin.event.selection.SelectionListener;
-import com.vaadin.event.selection.SingleSelectionEvent;
-import com.vaadin.event.selection.SingleSelectionListener;
-import com.vaadin.server.VaadinService;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.Grid.ItemClick;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.PopupView;
-import com.vaadin.ui.components.grid.ItemClickListener;
 import com.vaadin.ui.renderers.HtmlRenderer;
-
-import my.vaadin.bugrap.AppGlobalData;
 import my.vaadin.bugrap.ReportsOverview;
-import my.vaadin.bugrap.ReportsProviderService;
 import my.vaadin.bugrap.events.UpdateReportDetailsEvent;
-import my.vaadin.bugrap.utils.BugrapWindowOpener;
 import my.vaadin.bugrap.utils.PriorityHtmlProvider;
 import my.vaadin.bugrap.utils.RelativeDateUtils;
 
 public class ReportsOverviewLayout extends ReportsOverview {
-
-	private static final String COOKIE_VERSION = "bugrap-version";
-	private static final String ALL_VERSIONS = "All versions";
-
 	private enum ReportColumn {
 		VERSION("version", "VERSION"), PRIORITY("priority", "PRIORITY"), TYPE("type", "TYPE"), SUMMARY("summary",
-				"SUMMARY"), ASSIGNEDTO("assignedTo",
-						"ASSIGNED TO"), LASTMODIFIED("lastModified", "LAST MODIFIED"), REPORTED("reported", "REPORTED");
+			"SUMMARY"), ASSIGNEDTO("assignedTo",
+			"ASSIGNED TO"), LASTMODIFIED("lastModified", "LAST MODIFIED"), REPORTED("reported", "REPORTED");
 
 		private String id;
 		private String caption;
@@ -58,70 +34,54 @@ public class ReportsOverviewLayout extends ReportsOverview {
 			this.caption = caption;
 		}
 	}
-
 	private ListDataProvider<Report> dp;
 	private Listener updateListener;
 
 	private CustomStatusPopupContent content;
-	private Reporter me;
-	private ProjectVersion allVersions;
 
+	ReportsOverviewLayoutPresenter presenter;
+
+	//Here can be an interface ReportsOverviewLayoutPresenterInterface so the view will be separated from presenter
+	public void setPresenter(ReportsOverviewLayoutPresenter presenter) {
+
+	}
 	public ReportsOverviewLayout() {
 		super();
-
+		//set default presenter;
+		this.presenter = new ReportsOverviewLayoutPresenter(this);
 		init();
 	}
 
 	private void initBasicData() {
-		me = AppGlobalData.getUserData().getCurrentUser();
-		if (me == null) {
-			me = new Reporter();
-			me.setName("undefined");
-		}
-
-		accountBtn.setCaption(me.getName());
-
-		allVersions = new ProjectVersion();
-		allVersions.setVersion(ALL_VERSIONS);
-
-		logoutBtn.addClickListener(new ClickListener() {
-
-			@Override
-			public void buttonClick(ClickEvent event) {
-				AppGlobalData.getUserData().setCurrentUser(null);
-				BugrapWindowOpener.openLogin();
-			}
+		accountBtn.setCaption(presenter.getReporter().getName());
+		logoutBtn.addClickListener(e->{
+			presenter.logout();
 		});
 	}
+	public ProjectVersion getCurrentVersion() {
+		return versionSelector.getValue();
+	}
+	public void setCurrentVersion(ProjectVersion version){
+		boolean allVersionsSelected = version.getVersion().equals(ReportsOverviewLayoutPresenter.ALL_VERSIONS);
+		reportsGrid.getColumn(ReportColumn.VERSION.id).setHidden(!allVersionsSelected);
+		setSortOrder(allVersionsSelected);
+		updateDistributionBar();
+		updateData();
 
+	}
 	private void init() {
 		initBasicData();
 
 		initFiltersButtons();
 		initReportsTable();
-		versionSelector.addSelectionListener(new SingleSelectionListener<ProjectVersion>() {
-
-			@Override
-			public void selectionChange(SingleSelectionEvent<ProjectVersion> event) {
+		versionSelector.addSelectionListener(event ->{
 				if (event.getValue() == null)
 					return;
-				saveVersionToCookie(event.getValue().getVersion());
-				boolean allVersionsSelected = versionSelector.getValue() == allVersions;
-				reportsGrid.getColumn(ReportColumn.VERSION.id).setHidden(!allVersionsSelected);
-				setSortOrder(allVersionsSelected);
-
-				updateDistributionBar();
-				updateData();
-			}
+				presenter.selectVersion(event.getValue());
 		});
 
-		projectSelector.addSelectionListener(new SingleSelectionListener<Project>() {
-
-			@Override
-			public void selectionChange(SingleSelectionEvent<Project> event) {
+		projectSelector.addSelectionListener(event -> {
 				updateVersions(event.getValue());
-			}
-
 		});
 
 		initProjects();
@@ -138,22 +98,11 @@ public class ReportsOverviewLayout extends ReportsOverview {
 	}
 
 	private void updateDistributionBar() {
-		int[] a = new int[3];
 		ProjectVersion projectVersion = versionSelector.getValue();
 		if (projectVersion == null)
 			return;
-
-		if (projectVersion == allVersions) {
-			Project prj = projectSelector.getValue();
-			a[0] = (int) dataSource().countClosedReports(prj);
-			a[1] = (int) dataSource().countOpenedReports(prj);
-			a[2] = (int) dataSource().countUnassignedReports(prj);
-		} else {
-			a[0] = (int) dataSource().countClosedReports(projectVersion);
-			a[1] = (int) dataSource().countOpenedReports(projectVersion);
-			a[2] = (int) dataSource().countUnassignedReports(projectVersion);
-		}
-		distributionBar.setValues(a);
+		int[] reportCounts = presenter.getReportCounts(projectVersion);
+		distributionBar.setValues(reportCounts);
 	}
 
 	private void showReportDetails(Set<Report> allSelectedItems) {
@@ -197,39 +146,24 @@ public class ReportsOverviewLayout extends ReportsOverview {
 	private void initFiltersButtons() {
 		onlyMeBtn.setEnabled(false);
 		openBtn.setEnabled(false);
-		onlyMeBtn.addClickListener(new ClickListener() {
-
-			@Override
-			public void buttonClick(ClickEvent event) {
+		onlyMeBtn.addClickListener(e ->{
 				everyoneBtn.setEnabled(true);
 				updateData();
-			}
 		});
-		everyoneBtn.addClickListener(new ClickListener() {
-
-			@Override
-			public void buttonClick(ClickEvent event) {
+		everyoneBtn.addClickListener(e ->{
 				onlyMeBtn.setEnabled(true);
 				updateData();
-			}
 		});
-		openBtn.addClickListener(new ClickListener() {
-
-			@Override
-			public void buttonClick(ClickEvent event) {
+		openBtn.addClickListener(e-> {
 				allKindsBtn.setEnabled(true);
 				customBtn.removeStyleName("toggled");
 				updateData();
-			}
 		});
-		allKindsBtn.addClickListener(new ClickListener() {
 
-			@Override
-			public void buttonClick(ClickEvent event) {
-				openBtn.setEnabled(true);
-				customBtn.removeStyleName("toggled");
-				updateData();
-			}
+		allKindsBtn.addClickListener(e-> {
+			openBtn.setEnabled(true);
+			customBtn.removeStyleName("toggled");
+			updateData();
 		});
 
 		content = new CustomStatusPopupContent() {
@@ -240,21 +174,16 @@ public class ReportsOverviewLayout extends ReportsOverview {
 		};
 		final PopupView customStatusPopup = new PopupView(content);
 		customContainer.addComponent(customStatusPopup);
-		customBtn.addClickListener(new ClickListener() {
-
-			@Override
-			public void buttonClick(ClickEvent event) {
-				if (allKindsBtn.isEnabled() && openBtn.isEnabled()) {
-					customStatusPopup.setPopupVisible(true);
-					return;
-				}
-				allKindsBtn.setEnabled(true);
-				openBtn.setEnabled(true);
-				customBtn.addStyleName("toggled");
-				updateData();
+		customBtn.addClickListener(event -> {
+			if (allKindsBtn.isEnabled() && openBtn.isEnabled()) {
 				customStatusPopup.setPopupVisible(true);
-
+				return;
 			}
+			allKindsBtn.setEnabled(true);
+			openBtn.setEnabled(true);
+			customBtn.addStyleName("toggled");
+			updateData();
+			customStatusPopup.setPopupVisible(true);
 		});
 
 	}
@@ -262,83 +191,20 @@ public class ReportsOverviewLayout extends ReportsOverview {
 	@SuppressWarnings({ "unchecked", "serial" })
 	private void initReportsTable() {
 		setupColumns();
-
 		reportsGrid.setSelectionMode(SelectionMode.MULTI);
-		// reportsGrid.getSelectionModel().setUserSelectionAllowed(false);
-		//
-		// gridContainer.addShortcutListener(new ShortcutListener("upPress2",
-		// ShortcutAction.KeyCode.ARROW_UP, null) {
-		// @Override
-		// public void handleAction(Object sender, Object target) {
-		// System.out.println("ReportsOverviewLayout" + target.getClass());
-		// JavaScript.eval("window.$(\".v-grid-cell
-		// .v-grid-cell-focused\").click();");
-		// }
-		// });
-		//
-		// reportsGrid.addShortcutListener(new ShortcutListener("upPress3",
-		// ShortcutAction.KeyCode.ARROW_UP, null) {
-		// @Override
-		// public void handleAction(Object sender, Object target) {
-		// System.out.println("ReportsOverviewLayout" + target.getClass());
-		// JavaScript.eval("window.$(\".v-grid-cell
-		// .v-grid-cell-focused\").click();");
-		// }
-		// });
-		//
-		// addShortcutListener(new ShortcutListener("upPress4",
-		// ShortcutAction.KeyCode.ARROW_UP, null) {
-		// @Override
-		// public void handleAction(Object sender, Object target) {
-		// System.out.println("ReportsOverviewLayout" + target.getClass());
-		// JavaScript.eval("window.$(\".v-grid-cell
-		// .v-grid-cell-focused\").click();");
-		// }
-		// });
-		//
-		// mainSplitter.addShortcutListener(new ShortcutListener("upPress5",
-		// ShortcutAction.KeyCode.ARROW_UP, null) {
-		// @Override
-		// public void handleAction(Object sender, Object target) {
-		// System.out.println("ReportsOverviewLayout" + target.getClass());
-		// JavaScript.eval("window.$(\".v-grid-cell
-		// .v-grid-cell-focused\").click();");
-		// }
-		// });
-		//
-		// reportsGrid.addShortcutListener(new ShortcutListener("downPress",
-		// ShortcutAction.KeyCode.ARROW_DOWN, null) {
-		//
-		// @Override
-		// public void handleAction(Object sender, Object target) {
-		// System.out.println(
-		// "ReportsOverviewLayout" + target.getClass());
-		// JavaScript
-		// .eval("if(!window.(\".v-grid-body .v-grid-row-focused
-		// .v-grid-row-selected\").length){window.(\".v-grid-body
-		// .v-grid-cell-focused\").click();}"
-		// + "");
-		// }
-		// });
-
 		reportsGrid.addShortcutListener(new ShortcutListener("enterPress", ShortcutAction.KeyCode.ENTER, null) {
 
 			@Override
 			public void handleAction(Object sender, Object target) {
 				if (!reportsGrid.getSelectedItems().isEmpty())
-					openReport(reportsGrid.getSelectedItems().iterator().next());
+					presenter.openReport(reportsGrid.getSelectedItems().iterator().next());
 			}
 		});
 
-		reportsGrid.addItemClickListener(new ItemClickListener<Report>() {
-
-			@Override
-			public void itemClick(ItemClick<Report> event) {
-				if (event.getMouseEventDetails().isDoubleClick()) {
-					reportsGrid.deselectAll();
-					openReport(event.getItem());
-					return;
-				}
+		reportsGrid.addItemClickListener(event -> {
+			if (event.getMouseEventDetails().isDoubleClick()) {
+				reportsGrid.deselectAll();
+				presenter.openReport(event.getItem());
 			}
 		});
 
@@ -355,12 +221,8 @@ public class ReportsOverviewLayout extends ReportsOverview {
 			}
 		};
 
-		reportsGrid.addSelectionListener(new SelectionListener<Report>() {
-
-			@Override
-			public void selectionChange(SelectionEvent<Report> event) {
+		reportsGrid.addSelectionListener(event ->  {
 				showReportDetails(event.getAllSelectedItems());
-			}
 		});
 
 		dp = new ListDataProvider<>(Collections.emptyList());
@@ -393,93 +255,63 @@ public class ReportsOverviewLayout extends ReportsOverview {
 
 	}
 
-	protected void openReport(Report item) {
-		BugrapWindowOpener.openReport(item);
-	}
-
 	private void initProjects() {
 		projectSelector.clear();
-		Set<Project> projectNames = dataSource().findProjects();
-		if (projectNames == null || projectNames.isEmpty()) {
+		Set<Project> projects = presenter.getProjects();
+		if (projects == null || projects.isEmpty()) {
 			projectCountLbl.setValue("0");
 			return;
 		}
-		projectSelector.setItems(projectNames);
-		projectSelector.setSelectedItem(projectNames.iterator().next());
-		projectCountLbl.setValue("" + projectNames.size());
+		projectSelector.setItems(projects);
+		projectSelector.setSelectedItem(presenter.getCurrentProject());
+		projectCountLbl.setValue("" + projects.size());
 	}
 
 	private void updateVersions(Project project) {
 		versionSelector.clear();
 		if (project == null)
 			return;
-
-		List<ProjectVersion> versionsList = new ArrayList<>(dataSource().findProjectVersions(project));
-		if (versionsList.size() > 1)
-			versionsList.add(0, allVersions);
-
+		List<ProjectVersion> versionsList = presenter.getVersions(project);
 		versionSelector.setItems(versionsList);
-		ProjectVersion versionToSelect = getVersionByName(getVersionFromCookie(), versionsList);
-		if (!versionsList.contains(versionToSelect))
-			versionToSelect = versionsList.get(0);
-		versionSelector.setSelectedItem(versionToSelect);
+		//TODO put that logic to presenter
+		//setVersionOnOpen();
 	}
 
-	private ProjectVersion getVersionByName(String name, List<ProjectVersion> versions) {
-		if (name == null)
-			return null;
-
-		return versions.stream().filter(v -> name.equals(v.getVersion())).findFirst().orElse(null);
-	}
-
-	private String getVersionFromCookie() {
-		Cookie[] cookies = VaadinService.getCurrentRequest().getCookies();
-		if (cookies == null)
-			return "";
-		for (Cookie cookie : cookies) {
-			if (COOKIE_VERSION.equals(cookie.getName())) {
-				return cookie.getValue();
-			}
-		}
-		return "";
-	}
-
-	private void saveVersionToCookie(String value) {
-		final Cookie versionCookie = new Cookie(COOKIE_VERSION, value);
-		versionCookie.setPath(VaadinService.getCurrentRequest().getContextPath());
-
-		VaadinService.getCurrentResponse().addCookie(versionCookie);
-
-		// Page.getCurrent().getJavaScript().execute(String.format("document.cookie
-		// = '%s=%s;';", COOKIE_VERSION, value));
-	}
 
 	private void updateData() {
-		// reportsGrid.deselectAll();
-		dp = new ListDataProvider<>(dataSource().findReports(getQuery()));
+		Set <Report> reports = presenter.getReports(
+			everyoneBtn.isEnabled(),
+			openBtn.isEnabled(),
+			allKindsBtn.isEnabled(),
+			content.getSelectedItems());
+		dp = new ListDataProvider<>(reports);
 		reportsGrid.setDataProvider(dp);
 	}
 
-	private ReportsQuery getQuery() {
-		ReportsQuery query = new ReportsQuery();
-		query.project = projectSelector.getValue();
-		if (versionSelector.getValue() != allVersions)
-			query.projectVersion = versionSelector.getValue();
+	//	private void setVersionOnOpen() {
+	//	TODO put this logic to presenter
+	//				ProjectVersion versionToSelect = getVersionByName(getVersionFromCookie(), versionsList);
+	//				if (!versionsList.contains(versionToSelect))
+	//					versionToSelect = versionsList.get(0);
+	//				versionSelector.setSelectedItem(versionToSelect);
+	//	}
+	//	private ProjectVersion getVersionByName(String name, List<ProjectVersion> versions) {
+	//		if (name == null)
+	//			return null;
+	//
+	//		return versions.stream().filter(v -> name.equals(v.getVersion())).findFirst().orElse(null);
+	//	}
 
-		if (everyoneBtn.isEnabled())
-			query.reportAssignee = me;
+	//	private String getVersionFromCookie() {
+	//		Cookie[] cookies = VaadinService.getCurrentRequest().getCookies();
+	//		if (cookies == null)
+	//			return "";
+	//		for (Cookie cookie : cookies) {
+	//			if (COOKIE_VERSION.equals(cookie.getName())) {
+	//				return cookie.getValue();
+	//			}
+	//		}
+	//		return "";
+	//	}
 
-		if (!openBtn.isEnabled())
-			query.reportStatuses = Collections.singleton(Status.OPEN);
-		else if (!allKindsBtn.isEnabled())
-			query.reportStatuses = null;
-		else
-			query.reportStatuses = content.getSelectedItems();
-
-		return query;
-	}
-
-	private BugrapRepository dataSource() {
-		return ReportsProviderService.get();
-	}
 }
