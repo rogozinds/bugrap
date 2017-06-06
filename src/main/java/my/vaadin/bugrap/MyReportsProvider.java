@@ -30,6 +30,22 @@ public class MyReportsProvider {
 	private static List<String> allUsers;
 	private static Map<Report, List<Comment>> commentsMap = new HashMap<>();
 
+	//Looks like you don't need to have synchronized method, as this method is not called concurently or I just have not
+	// found why it's needed.
+
+	//You should also use provided backend.
+	//MOre info here https://www.flowdock.com/app/vaadin/pro-tools-newbies/threads/MHWIXXcTYPdnuu6gx5z4KZ3Q7HG
+	// This is the dependency
+
+//	<dependency>
+//	<groupId>org.vaadin</groupId>
+//	<artifactId>bugrap-domain</artifactId>
+//	<version>1.0</version>
+//	</dependency>
+
+	// After you add this dependency you can change these methods implementation just to
+	// BugrapRepository.getAllReports() same for other methods.
+
 	public synchronized static List<Report> getAllReports() {
 		if (allReports != null)
 			return allReports;

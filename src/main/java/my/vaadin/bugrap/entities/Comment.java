@@ -2,6 +2,7 @@ package my.vaadin.bugrap.entities;
 
 import java.util.Date;
 
+//That should be part of BugRapRepository dependency
 public class Comment {
 
 	@Override
